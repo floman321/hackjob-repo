@@ -80,7 +80,9 @@ public final class R {
         public static final int str_configuration=0x7f060004;
         public static final int str_create_new_meeting=0x7f060005;
         public static final int str_curr_attached_files=0x7f06000c;
+        public static final int str_currentview=0x7f060011;
         public static final int str_date=0x7f06000a;
+        public static final int str_filelist=0x7f060012;
         public static final int str_join_network=0x7f06000f;
         public static final int str_location=0x7f060009;
         public static final int str_meeting_name=0x7f060008;
@@ -88,10 +90,8 @@ public final class R {
         public static final int str_remove_meeting=0x7f060006;
         public static final int str_scanavailablenetw=0x7f060003;
         public static final int str_start_as_host=0x7f060007;
+        public static final int str_view=0x7f060013;
         public static final int title_activity_guest_joined_network=0x7f060010;
-        public static final int title_section1=0x7f060011;
-        public static final int title_section2=0x7f060012;
-        public static final int title_section3=0x7f060013;
     }
     public static final class style {
         /** 
