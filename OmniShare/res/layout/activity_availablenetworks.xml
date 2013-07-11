@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/text_view_availablenetworks"
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:text="@string/str_available_networks"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <ListView
+        android:id="@+id/lv_networkslist"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.52"
+        android:entries="@array/strarr_networkslist"/>
+    
+    <FrameLayout 
+	    android:id="@+id/fl_btnwrapper_networksitem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="40dip">
+		
+		<Button
+	        android:id="@+id/btn_joinnetwork"
+	        android:layout_width="192dip"
+	        android:layout_gravity="center"
+	        android:layout_height="wrap_content"
+	        android:text="@string/str_join_network"
+	        android:onClick="switchme"/>
+		
+	</FrameLayout>
+
+</LinearLayout>
