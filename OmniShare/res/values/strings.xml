@@ -21,5 +21,6 @@
     <string name="str_currentview">Current View</string>
     <string name="str_filelist">File List</string>
     <string name="str_view">View</string>
+    <string name="str_save">Save</string>
 
 </resources>

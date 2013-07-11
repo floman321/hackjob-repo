@@ -114,9 +114,10 @@
         android:layout_weight="0.52"
         android:entries="@array/strarr_meetingfilelist"/>
 	
-	<FrameLayout 
+	<RelativeLayout 
 	    android:id="@+id/fl_btnwrapper_meetingitem"
         android:layout_width="match_parent"
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:paddingBottom="40dip">
 		
@@ -125,8 +126,18 @@
 	        android:layout_width="192dip"
 	        android:layout_gravity="center"
 	        android:layout_height="wrap_content"
-	        android:text="@string/str_addremove_files"/>
+	        android:text="@string/str_addremove_files"
+	        android:layout_centerHorizontal="true"/>
 		
-	</FrameLayout>
+		<Button
+	        android:id="@+id/btn_save"
+	        android:layout_width="192dip"
+	        android:layout_gravity="center"
+	        android:layout_height="wrap_content"
+	        android:text="@string/str_save"
+	        android:layout_below="@+id/btn_addremovefile"
+	        android:layout_alignLeft="@+id/btn_addremovefile"/>
+		
+	</RelativeLayout>
 	
 </LinearLayout>
