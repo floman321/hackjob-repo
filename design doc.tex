@@ -1,0 +1,80 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\marginparwidth = 15pt
+\oddsidemargin = 15pt
+\title{Design Specifications}
+\date{24/07/2013}
+
+\begin{document}
+  \maketitle
+\begin{tabbing}
+Group Name: \= HackJob Programmers
+\\~
+\\Project: Samsung DLNA Enabled Application
+\\~
+  \\* Group Members:
+\end{tabbing}
+	
+	\begin{itemize}
+	\item PA Janse van Rensburg - 29034354
+	\item NJ Taljaard - 10153285
+	\item B Kleinhans - 11080851
+	\end{itemize}
+
+Document Version 1.0
+
+\newpage
+\section{Introduction:}
+\subsection{Purpose:}
+The purpose of this document is to give more detail regarding the design of our Samsung DLNA-enabled android application, as well as the layouts it will use, as well as the design of the database.
+\subsection{Document Conventions:}
+\begin{itemize}
+\item LaTeX.
+\item Crow's foot notation for ERD's.
+\item UML 2.0 for UML diagrams.
+\end{itemize}
+\subsection{Project Scope:}
+The scope of the Omnishare project can be summarized as a software solution that makes use of the Samsung AllShare API and DLNA enabled technologies to:
+\begin{itemize}
+\item Allow for the creation and maintenance of a network of AllShare enabled, SAMSUNG authenticated devices  that will allow for simplified, mass sharing of data and utilization of digital mediums (such as
+\\ televisions for display purposes) in an efficient, simplified manner.
+\item  Create a home entertainment network to allow for centralization of data and control of DLNA enabled devices.
+By formulating this foundation, the application can later be expanded to be cross platform and 
+\\device compatible.  Later, multiple sessions (access points) can be made available and managed per server, so server can host multiple parallel sessions.
+\end{itemize}
+
+\subsection{References:}
+Andrew Syrett, by means of requirements elicitation and formal meetings.
+
+\subsection{Related Documents:}
+Related documents to the current one, are the following :
+\begin{itemize}
+\item Requirements Specification Document
+\item Architectural Specification Document
+\end{itemize}
+
+\newpage
+\section{System Description:}
+The OmniShare System will be used to consolidate data that is used / generated at specific events / sessions. In cases where it is used for a meeting, it may keep track of all the files used during a meeting, people that attended / were connected to that meeting, files they shared, and other multimedia devices used (Smart TV's etc.).
+In the case of a social event, it may keep track of the people's devices that were present there, store the media generated during the event at a single location, (i.e. photos, videos) as well as share other media files for use by the host (i.e. mp3's that people want to play). The system will make use of Samsung DLNA enabled devices, as well as the Samsung AllShare API for communicating with the devices.
+
+\newpage
+\section{Designs:}
+\subsection{Database Design:}
+
+\subsection{System Design:}
+
+\subsection{User Interface Design:}
+
+\section{Quality Issues:}
+For the quality issues / non-functional requirements please see our architectural design specification.
+
+\section{Coding Guidelines:}
+Coding Guidelines to be used will be based upon the Google Java Coding standards, so as to make the code as readable, understandable and neat as possible.
+\begin{verbatim}
+http://code.google.com/p/java-coding-standards/wiki/JavaCodingStandardDiscussion
+\end{verbatim}
+
+\end{document}
