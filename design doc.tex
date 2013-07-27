@@ -5,7 +5,7 @@
 \marginparwidth = 15pt
 \oddsidemargin = 15pt
 \title{Design Specifications}
-\date{24/07/2013}
+\date{27/07/2013}
 
 \begin{document}
   \maketitle
@@ -23,7 +23,7 @@ Group Name: \= HackJob Programmers
 	\item B Kleinhans - 11080851
 	\end{itemize}
 
-Document Version 1.0
+Document Version 1.2
 
 \newpage
 \section{Introduction:}
@@ -44,12 +44,12 @@ The scope of the Omnishare project can be summarized as a software solution that
 By formulating this foundation, the application can later be expanded to be cross platform and 
 \\device compatible.  Later, multiple sessions (access points) can be made available and managed per server, so server can host multiple parallel sessions.
 \end{itemize}
-
+\newpage
 \subsection{References:}
 Andrew Syrett, by means of requirements elicitation and formal meetings.
 
 \subsection{Related Documents:}
-Related documents to the current one, are the following :
+Related documents to the current one, are the following:
 \begin{itemize}
 \item Requirements Specification Document
 \item Architectural Specification Document
@@ -57,19 +57,125 @@ Related documents to the current one, are the following :
 
 \newpage
 \section{System Description:}
-The OmniShare System will be used to consolidate data that is used / generated at specific events / sessions. In cases where it is used for a meeting, it may keep track of all the files used during a meeting, people that attended / were connected to that meeting, files they shared, and other multimedia devices used (Smart TV's etc.).
-In the case of a social event, it may keep track of the people's devices that were present there, store the media generated during the event at a single location, (i.e. photos, videos) as well as share other media files for use by the host (i.e. mp3's that people want to play). The system will make use of Samsung DLNA enabled devices, as well as the Samsung AllShare API for communicating with the devices.
+The OmniShare System will be used to consolidate data that is generated and used during specific events or sessions. In cases where it is used for a meeting, it may keep track of all the files used during a meeting, people that attended
+or any devices that were connected to that meeting, files they shared, and other multimedia devices used (Smart TV's etc.). In the case of a social event, it may keep track of the people's devices that were present there and store the media generated during the event at a single location, (i.e. photos, videos) as well as share other media for use by the host (i.e. mp3's that people want to play). The system will make use of Samsung DLNA enabled devices, as well as the Samsung AllShare API for communicating with the devices.
 
 \newpage
 \section{Designs:}
 \subsection{Database Design:}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{./DatabaseDesign_ERD}
+\caption{ERD for OmniShare Server-side Database}
+\label{fig:DatabaseDesign_ERD}
+\end{figure}
+
+\newpage
 \subsection{System Design:}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{./UseCase_Overview}
+\caption{Use-case Overview}
+\label{fig:UseCase_Overview}
+\end{figure}
+\newpage
+
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{./My_Meetings_Activity}
+\caption{My Meetings Activity}
+\label{fig:My_Meetings_Activity}
+\end{figure}
+
+\newpage
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{./Scan_for_networks_Activity}
+\caption{Scan for networks Activity}
+\label{fig:Scan_for_networks_Activity}
+\end{figure}
+\newpage
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{./Configuration_Activity}
+\caption{Configuration Activity}
+\label{fig:Configuration_Activity}
+\end{figure}
+\newpage
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{./OmniShare_Classes}
+\caption{OmniShare Class Diagram}
+\label{fig:OmniShare_Classes}
+\end{figure}
+
+\newpage
 
 \subsection{User Interface Design:}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=6cm, height=13cm]{./GUI/LoginPage}
+\caption{Login Page}
+\label{fig:LoginPage}
+\end{figure}
+\newpage
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=6cm, height=13cm]{./GUI/LandingPage}
+\caption{Landing Page}
+\label{fig:LandingPage}
+\end{figure}
+\newpage
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=6cm, height=13cm]{./GUI/MeetingPage}
+\caption{Meeting Page}
+\label{fig:MeetingPage}
+\end{figure}
+\newpage
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=6cm, height=13cm]{./GUI/ViewMeeting}
+\caption{View Meeting Page}
+\label{fig:ViewMeeting}
+\end{figure}
+\newpage
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=13cm, height=6cm]{./GUI/HostPinchPage}
+\caption{Host Page}
+\label{fig:HostPage}
+\end{figure}
+\newpage
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=6cm, height=13cm]{./GUI/ViewNetworksPage}
+\caption{View Networks Page}
+\label{fig:ViewNetworksPage}
+\end{figure}
+\newpage
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=6cm, height=13cm]{./GUI/GuestPage}
+\caption{Guest Page}
+\label{fig:GuestPage}
+\end{figure}
+\newpage
+
 
 \section{Quality Issues:}
-For the quality issues / non-functional requirements please see our architectural design specification.
+For the quality issues / non-functional requirements please see our\\ architectural design specification.
 
 \section{Coding Guidelines:}
 Coding Guidelines to be used will be based upon the Google Java Coding standards, so as to make the code as readable, understandable and neat as possible.
