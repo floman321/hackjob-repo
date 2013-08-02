@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HelloMobileWorld</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello Mobile World!</string>
+    <string name="ButtonText1">KleinKnoppie</string>
+
+</resources>
