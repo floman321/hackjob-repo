@@ -14,32 +14,36 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ListView
-        android:id="@+id/lv_meetingslist"
-        android:layout_width="match_parent"
+        android:id="@android:id/list"
+        android:layout_width="320dip"
         android:layout_height="0dip"
         android:layout_weight="0.52"
-        android:entries="@array/strarr_meetings" >
+        android:layout_gravity="center_horizontal">
     </ListView>
 	
-    <Button
+     <Button
         android:id="@+id/btn_createNewMeeting"
         android:layout_width="192dp"
-        android:layout_gravity="center"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableLeft="@drawable/new_meeting"
+        android:onClick="switch_createMeeting"
         android:text="@string/str_create_new_meeting" />
 
     <Button
         android:id="@+id/btn_removeMeeting"
         android:layout_width="192dp"
-        android:layout_gravity="center"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableLeft="@drawable/remove_meeting"
         android:text="@string/str_remove_meeting" />
 
     <Button
         android:id="@+id/btn_startAsHost"
         android:layout_width="192dp"
-        android:layout_gravity="center"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableLeft="@drawable/start_as_host"
         android:text="@string/str_start_as_host" />
 
 </LinearLayout>

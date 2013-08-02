@@ -22,5 +22,6 @@
     <string name="str_filelist">File List</string>
     <string name="str_view">View</string>
     <string name="str_save">Save</string>
+    <string name="title_activity_create_meeting">CreateMeeting</string>
 
 </resources>

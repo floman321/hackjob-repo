@@ -4,60 +4,17 @@
         <item >ABSA Meeting 26 Jun</item>
 	    <item >Staff Meeting</item>
 	    <item >University of Pretoria Meeting</item>   
-	    <item >ABSA Meeting 26 Jun</item>
-	    <item >Staff Meeting</item>
-	    <item >University of Pretoria Meeting</item> 
-	    <item >ABSA Meeting 26 Jun</item>
-	    <item >Staff Meeting</item>
-	    <item >University of Pretoria Meeting</item> 
-	    <item >ABSA Meeting 26 Jun</item>
-	    <item >Staff Meeting</item>
-	    <item >University of Pretoria Meeting</item> 
-	    <item >ABSA Meeting 26 Jun</item>
-	    <item >Staff Meeting</item>
-	    <item >University of Pretoria Meeting</item> 
-	    <item >ABSA Meeting 26 Jun</item>
-	    <item >Staff Meeting</item>
-	    <item >University of Pretoria Meeting</item> 
-	    <item >ABSA Meeting 26 Jun</item>
-	    <item >Staff Meeting</item>
-	    <item >University of Pretoria Meeting</item> 
     </string-array>
     
     <string-array name="strarr_meetingfilelist">
         <item >Minutes.pdf</item>
 	    <item >Objectives.pdf</item>
-	    <item >Motivation.avi</item>   
-	    <item >Seminar.mp3</item> 
-	    <item >Minutes.pdf</item>
-	    <item >Objectives.pdf</item>
-	    <item >Motivation.avi</item>   
-	    <item >Seminar.mp3</item> 
-	    <item >Minutes.pdf</item>
-	    <item >Objectives.pdf</item>
-	    <item >Motivation.avi</item>   
-	    <item >Seminar.mp3</item> 
-	    <item >Minutes.pdf</item>
-	    <item >Objectives.pdf</item>
-	    <item >Motivation.avi</item>   
-	    <item >Seminar.mp3</item> 
+	    <item >Motivation.avi</item>  
     </string-array>
     
     <string-array name="strarr_networkslist">
         <item >BoardRoom 1</item>
 	    <item >Sales Dept</item>
-	    <item >Random Network</item>   
-	    <item >BoardRoom 1</item>
-	    <item >Sales Dept</item>
-	    <item >Random Network</item>
-	    <item >BoardRoom 1</item>
-	    <item >Sales Dept</item>
-	    <item >Random Network</item>
-	    <item >BoardRoom 1</item>
-	    <item >Sales Dept</item>
-	    <item >Random Network</item>
-	    <item >BoardRoom 1</item>
-	    <item >Sales Dept</item>
-	    <item >Random Network</item>
+	    <item >Random Network</item> 
     </string-array>
 </resources>

@@ -39,6 +39,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.omnishare.ScanNetworks" />
         </activity>
+         <activity
+            android:name="com.example.omnishare.CreateMeeting"
+            android:label="@string/title_activity_create_meeting" >
+        </activity>
     </application>
 
 </manifest>

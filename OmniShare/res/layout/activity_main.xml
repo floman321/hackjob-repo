@@ -16,6 +16,7 @@
         android:layout_alignRight="@+id/btnScanAvailableNetworks"
         android:layout_below="@+id/btnScanAvailableNetworks"
         android:layout_marginTop="30dp"
+        android:drawableLeft="@drawable/configuration"
         android:text="@string/str_configuration" />
 
     <Button
@@ -27,6 +28,7 @@
         android:layout_alignRight="@+id/btnScanAvailableNetworks"
         android:layout_marginTop="66dp"
         android:text="@string/str_mymeetings" 
+        android:drawableLeft="@drawable/create_new_meeting"
         android:onClick="switchme"/>
 
     <Button
@@ -37,6 +39,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:text="@string/str_scanavailablenetw"
+        android:drawableLeft="@drawable/scan_for_network"
         android:onClick="switchme" />
 
 </RelativeLayout>
