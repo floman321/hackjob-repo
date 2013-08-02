@@ -1,0 +1,152 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".CreateMeeting" >
+    
+   	<RelativeLayout 
+    android:layout_width="280dip"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal">
+		<TextView
+		    android:id="@+id/text_view_createmeeting"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:paddingTop="10dip"
+	        android:paddingBottom="10dip"
+	        android:layout_gravity="center"
+	        android:textIsSelectable="true"/>
+	
+
+	    
+		<TextView 
+		    android:id="@+id/text_view_createmeetingname"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/str_meeting_name"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/text_view_createmeeting"/>
+		
+		<EditText 
+		    android:id="@+id/edit_text_createmeetingname"
+		    android:hint="@string/str_meeting_name"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@android:drawable/editbox_background"
+		    android:layout_alignParentRight="true"
+		    android:layout_toRightOf="@+id/text_view_createmeetingname"
+		    android:layout_below="@+id/text_view_createmeeting"/>
+		
+		<TextView 
+		    android:id="@+id/text_view_createlocation"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/str_location"
+		    android:layout_alignTop="@+id/edit_text_createlocation"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/text_view_createmeetingname"/>
+		
+		<EditText 
+		    android:id="@+id/edit_text_createlocation"
+		    android:hint="@string/str_location"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@android:drawable/editbox_background"
+		    android:layout_alignParentRight="true"
+		    android:layout_alignLeft="@+id/edit_text_createmeetingname"
+		    android:layout_toRightOf="@+id/text_view_createlocation"
+		    android:layout_below="@+id/edit_text_createmeetingname"/>
+		
+		<TextView 
+		    android:id="@+id/text_view_createdateofmeeting"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/str_date"
+		    android:layout_alignTop="@+id/edit_text_createdateofmeeting"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/text_view_createlocation"/>
+		
+		<EditText 
+		    android:id="@+id/edit_text_createdateofmeeting"
+		    android:hint="@string/str_date"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@android:drawable/editbox_background"
+		    android:layout_alignParentRight="true"
+		    android:layout_alignLeft="@+id/edit_text_createmeetingname"
+		    android:layout_toRightOf="@+id/text_view_createdateofmeeting"
+		    android:layout_below="@+id/edit_text_createlocation"/>
+		
+		<TextView 
+		    android:id="@+id/text_view_createmeetingaccesscode"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/str_access_code"
+		    android:layout_alignTop="@+id/edit_text_createmeetingaccesscode"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/text_view_createdateofmeeting"/>
+		
+		<EditText 
+		    android:id="@+id/edit_text_createmeetingaccesscode"
+		    android:hint="@string/str_access_code"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@android:drawable/editbox_background"
+		    android:layout_alignParentRight="true"
+		    android:layout_alignLeft="@+id/edit_text_createmeetingname"
+		    android:layout_toRightOf="@+id/text_view_createmeetingaccesscode"
+		    android:layout_below="@+id/edit_text_createdateofmeeting"/>
+		
+	</RelativeLayout>
+	
+	<TextView 
+	    android:id="@+id/text_view_createcurrattachedfiles"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:paddingTop="10dip"
+        android:paddingBottom="10dip"
+	    android:gravity="center"
+	    android:text="@string/str_curr_attached_files"/>
+	
+	<ListView
+        android:id="@+id/lv_createmeetingfilelist"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.52"
+        android:entries="@array/strarr_meetingfilelist"/>
+	
+	<RelativeLayout 
+	    android:id="@+id/fl_btnwrapper_createmeetingitem"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:paddingBottom="40dip">
+		
+		<Button
+		    android:id="@+id/btn_createaddremovefile"
+		    android:layout_width="192dip"
+		    android:layout_height="wrap_content"
+		    android:layout_centerHorizontal="true"
+		    android:layout_gravity="center"
+		    android:drawableLeft="@drawable/add_remove_file"
+		    android:text="@string/str_addremove_files" />
+		
+		<Button
+		    android:id="@+id/btn_createsave"
+		    android:layout_width="192dip"
+		    android:layout_height="wrap_content"
+		    android:layout_alignLeft="@+id/btn_createaddremovefile"
+		    android:layout_below="@+id/btn_createaddremovefile"
+		    android:layout_gravity="center"
+		    android:drawableLeft="@drawable/save_file"
+		    android:onClick="createNewMeeting"
+		    android:text="@string/str_save" />
+		
+	</RelativeLayout>
+	
+</LinearLayout>
