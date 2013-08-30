@@ -1,23 +1,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:orientation="vertical">
-    
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
     <TextView
         android:id="@+id/path"
-        android:layout_width="fill_parent" 
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+
     <ListView
         android:id="@android:id/list"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        />
+        android:layout_width="fill_parent"
+        android:layout_height="351dp" />
+
     <TextView
         android:id="@android:id/empty"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:text="No Data"
-        />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="No Data" />
+
+    <ProgressBar
+        android:id="@+id/progressBarAddFiles"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25sp"
+       />
+
+    <Button
+        android:id="@+id/btnFinishAddFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:drawableLeft="@drawable/save_file"
+        android:onClick="sendFiles"
+        android:text="Done" />
 
 </LinearLayout>

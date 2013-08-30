@@ -54,19 +54,8 @@ public class CreateMeeting extends Activity
 		queryValues.put("meetingLocation", meetingLocation.getText().toString());
 		queryValues.put("meetingDate", meetingDate.getText().toString());
 		queryValues.put("meetingCode", meetingCode.getText().toString());
-		dbController.insertMeeting(queryValues);
-			
-		//Add to strarr_meetings
-		String[] array = getResources().getStringArray(R.array.strarr_meetings);
-	    System.out.println("--array.length--"+array.length);
-	    List<String> list = new ArrayList<String>();
-	    list = Arrays.asList(array);
-	    ArrayList<String> arrayList = new ArrayList<String>(list);
-	    arrayList.add(meetingName.getText().toString());
-	    array = arrayList.toArray(new String[list.size()]);
-	    System.out.println("--array.length--"+array.length);
-		
-		
+		dbController.insertMeeting(queryValues);			
+	
 		this.callHomeActivity(view);
 	}
 	
@@ -75,4 +64,11 @@ public class CreateMeeting extends Activity
 		Intent objIntent = new Intent(getApplicationContext(),MyMeetings.class);
 		startActivity(objIntent);
 	}
+	
+	public void addFiles(View view)
+	{			
+		Intent objIndent = new Intent(getApplicationContext(), AddFilesActivity.class);		
+		startActivityForResult(objIndent, RESULT_OK); //TODO Fix THIS
+		
+	}	
 }

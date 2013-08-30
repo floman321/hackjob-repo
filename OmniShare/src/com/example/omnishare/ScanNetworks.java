@@ -11,6 +11,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
@@ -133,6 +134,17 @@ public class ScanNetworks extends Activity{
 						Intent objIndent = new Intent(getApplicationContext(), MeetingListItemDetail.class);
 						objIndent.putExtra("meetingId", valmeetingId);
 						startActivity(objIndent);*/
+						
+						TextView newHost = (TextView) view.findViewById(R.id.networkhost);
+						String hostAddress = (String) newHost.getText();
+						System.out.println("Host " + hostAddress + " send to sharedPrefs File");
+					    SharedPreferences settings = getSharedPreferences("OmniShareHostsFile", 0);
+					    SharedPreferences.Editor editor = settings.edit();
+					    editor.putString("Host", hostAddress);						
+				        editor.commit();
+
+
+						
 					}
 				});
 		      
