@@ -61,7 +61,9 @@ public class MeetingListItemDetail extends Activity
 			meetingAccessCode.setText(meetingList.get("meetingCode"));
 		}
 
-		ArrayList<String> fileList = getCurrentFileList();
+		//TODO THIS HAS TO BE REPLACED WITH DB FUNCTIONALITY
+		
+	/*	ArrayList<String> fileList = getCurrentFileList();
 		if (fileList != null)
 			System.out.println("FileList Size " + fileList.size());
 
@@ -71,7 +73,7 @@ public class MeetingListItemDetail extends Activity
 					R.layout.activity_fileitem, fileList);
 			ListView lv = (ListView) findViewById(R.id.lv_meetingfilelist);
 			lv.setAdapter(arrayAdapter);
-		}
+		}*/
 
 	}
 

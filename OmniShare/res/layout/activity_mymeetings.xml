@@ -38,12 +38,6 @@
         android:drawableLeft="@drawable/remove_meeting"
         android:text="@string/str_remove_meeting" />
 
-    <Button
-        android:id="@+id/btn_startAsHost"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:drawableLeft="@drawable/start_as_host"
-        android:text="@string/str_start_as_host" />
+  
 
 </LinearLayout>

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.R.color;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,8 +57,7 @@ public class ScanNetworks extends Activity{
         }
 
        String IP = Formatter.formatIpAddress(wim.getConnectionInfo().getIpAddress());
-       System.out.println("NETWORK ADDRESS FROM WIM " + IP);
-       
+       System.out.println("NETWORK ADDRESS FROM WIM " + IP);       
        
        new FindServerTask().execute(IP);	
 	}
@@ -70,52 +70,76 @@ public class ScanNetworks extends Activity{
 			//myIntent.putExtra("key", value); //Optional parameters
 			ScanNetworks.this.startActivity(myIntent);
 			break;
-		}
-		
+		}		
 	}
 
 
 	
 	   private class FindServerTask extends AsyncTask<String, Integer, ArrayList<String>> 
 	   {
-			ServerFinder serverfinder;
 			ArrayList<String> serverList;
 			
 		   @Override
 		   protected void onPreExecute() {
 		      super.onPreExecute();
-		      System.out.println("onPreExecute()");
-
 		   }
 		 
 		   @Override
 		   protected ArrayList<String> doInBackground(String... params) 
 		   {
 		      String IP=params[0];
-		 
-		      serverfinder = new ServerFinder();
-		      try
+		      serverList = new ArrayList<String>();
+		      if (android.os.Build.VERSION.SDK_INT > 9) 
 				{
-					serverList = serverfinder.findOmniShareServers(IP);
-				}
-				catch (Exception e)
+				      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+				      StrictMode.setThreadPolicy(policy);
+			    }
+				
+		        String tempIP = IP.substring(0, IP.length() - 3); //myIP.getHostAddress().toString().substring(0, myIP.getHostAddress().toString().length() - 3);
+		        InetAddress tempAddr = null;
+		        Socket tempSocket = null;		        
+		        
+			    for(int i = 0; i < 256; i++)
 				{
-					e.printStackTrace();
-				}
-			
-				      
-				  for (int i = 0; i <= 100; i += 5) 
-				  {		        
-				     publishProgress(i);
-				  }
-				  return serverList;
+			    
+			    	
+			    	publishProgress(i/2);
+					try
+					{		
+						tempAddr = InetAddress.getByName(tempIP + i);		
+						if(tempAddr.isReachable(200))
+			            {
+							System.out.println("IP " + i + " Was reachable");
+			                tempSocket = new Socket(tempAddr, 5000);
+			                System.out.println("Socket Created");
+			                if(tempSocket.isConnected())
+			                {
+			                    System.out.println("Server Found @ " + tempSocket.getInetAddress().getHostAddress());
+			                    serverList.add(tempAddr.getHostAddress());	
+			                    tempSocket.close();
+				                tempSocket = null;
+			                    publishProgress(100);
+			                    break; //early out once OmniShare Server has been found
+			                }
+			                tempSocket.close();
+			                tempSocket = null;
+			            }			
+					}
+					catch (IOException e)
+					{
+			                System.out.println ("Connection Refused @ " + i);				
+					}					
+				}    
+		        System.out.println("ServerFinder return findOmniShareServers");        
+		        return serverList;
 		   }
 		 
 		   @Override
 		   protected void onProgressUpdate(Integer... values) 
 		   {
 		      super.onProgressUpdate(values);
-		      System.out.println("Progress at " + values[0]);
+		      ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar_findNetworks);
+		      pb.setProgress(values[0]);
 		   }
 		 
 		   protected void onPostExecute(ArrayList<String> result)
@@ -128,13 +152,7 @@ public class ScanNetworks extends Activity{
 				{
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,int position, long id)
-					{
-					/*	meetingId = (TextView) view.findViewById(R.id.meetingId);
-						String valmeetingId = (meetingId.getText() != null ? meetingId.getText().toString() : "");
-						Intent objIndent = new Intent(getApplicationContext(), MeetingListItemDetail.class);
-						objIndent.putExtra("meetingId", valmeetingId);
-						startActivity(objIndent);*/
-						
+					{						
 						TextView newHost = (TextView) view.findViewById(R.id.networkhost);
 						String hostAddress = (String) newHost.getText();
 						System.out.println("Host " + hostAddress + " send to sharedPrefs File");
@@ -142,9 +160,6 @@ public class ScanNetworks extends Activity{
 					    SharedPreferences.Editor editor = settings.edit();
 					    editor.putString("Host", hostAddress);						
 				        editor.commit();
-
-
-						
 					}
 				});
 		      

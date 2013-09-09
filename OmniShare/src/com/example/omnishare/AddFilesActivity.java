@@ -173,7 +173,7 @@ public class AddFilesActivity extends ListActivity
 			float counter = 100/inputs[0].size();
 			for(int i = 0; i < inputs[0].size(); i++)
 			{
-				sendFile(new File(inputs[0].get(i)));
+				ServerInterface.sendFile(new File(inputs[0].get(i)), getApplicationContext());
 				publishProgress((int)((i+1)*counter));
 			}			
 			
@@ -184,55 +184,6 @@ public class AddFilesActivity extends ListActivity
 	   }
 	
 	
-	protected void sendFile(File file)
-	{
-		SharedPreferences settings = getSharedPreferences("OmniShareHostsFile", 0);
-	    String hostAddress = settings.getString("Host", "NO_HOST_SET");
-	    System.out.println("Attempt to send file " + file.getAbsolutePath() + " to " + hostAddress);
-	    
-	    if (android.os.Build.VERSION.SDK_INT > 9) //TO ALLOW FOR PERMISSIONS TO OPEN NEW SOCKET ON ANDROID DEVICES
-		{
-		      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-		      StrictMode.setThreadPolicy(policy);
-	    }	
-	    
-	    if(!hostAddress.equals("NO_HOST_SET"))
-	    {
-		    try
-	        {
-		    Socket socket = new Socket(hostAddress, 5000);  
-		                 
-	        byte[] mybytearray = new byte[(int) file.length()];  
-	          
-	        FileInputStream fis = new FileInputStream(file);  
-	        BufferedInputStream bis = new BufferedInputStream(fis);  
-	               
-	        DataInputStream dis = new DataInputStream(bis);     
-	        dis.readFully(mybytearray, 0, mybytearray.length);  
-	          
-	        OutputStream os = socket.getOutputStream();  
-	          
-	        DataOutputStream dos = new DataOutputStream(os);          
-	       
-	        dos.writeUTF(file.getName());     
-	        dos.writeLong(mybytearray.length);     
-	        dos.write(mybytearray, 0, mybytearray.length);     
-	        dos.flush();      
-	            
-	        
-	        
-	        socket.close();  	        
-	        fis.close();
-	        bis.close();
-	        dos.close();
-	        }
-	        catch(Exception e)
-	        {
-	        	e.printStackTrace();
-	        }
-		    
-		    System.out.println("Transfer done...");
-	    }
-	}
+	
 
 }
