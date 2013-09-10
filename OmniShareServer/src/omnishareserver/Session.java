@@ -23,6 +23,13 @@ public class Session
         hasHost = false;
         hosts = new ArrayList<>();
     }
+
+    public ArrayList<String> getDeviceList()
+    {
+        return devicesConnected;
+    }
+    
+    
     
     public void addDevice(String dev)
     {
@@ -54,5 +61,12 @@ public class Session
     {
         isActive = false;
     }
+
+    public boolean hasHost()
+    {
+        return hasHost;
+    }
+    
+    
     
 }
