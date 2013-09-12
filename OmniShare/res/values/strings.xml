@@ -23,5 +23,11 @@
     <string name="str_view">View</string>
     <string name="str_save">Save</string>
     <string name="title_activity_create_meeting">CreateMeeting</string>
+    <string name="title_activity_add_files">AddFilesActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_host_start_view">HostStartView</string>
+    <string name="hostview_curr_view_title">Current View</string>
+    <string name="hostview_file_list_title">File List</string>
+    <string name="hostview_active_disp_device">Display Device</string>
 
 </resources>

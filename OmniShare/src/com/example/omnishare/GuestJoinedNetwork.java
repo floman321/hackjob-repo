@@ -1,10 +1,26 @@
 package com.example.omnishare;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Locale;
-
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore.Files;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +32,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class GuestJoinedNetwork extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -136,11 +156,43 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			Fragment fragment = new DummySectionFragment();
-			Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment.setArguments(args);
-			return fragment;
+			switch(position)
+			{
+				case 0:
+				{
+					Fragment fragment = new DummySectionFragment();
+					Bundle args = new Bundle();
+					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;					
+				}
+				case 1:
+				{
+					Fragment fragment = new FileListFragment();
+					Bundle args = new Bundle();
+					args.putInt(FileListFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;					
+				}
+				case 2:
+				{
+					Fragment fragment = new DummySectionFragment();
+					Bundle args = new Bundle();
+					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;					
+				}
+				default:
+				{
+					Fragment fragment = new DummySectionFragment();
+					Bundle args = new Bundle();
+					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;
+				}
+			
+			}
+			
 		}
 
 		@Override
@@ -191,5 +243,85 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 			return rootView;
 		}
 	}
+	
+	
+	public static class FileListFragment extends Fragment
+	{
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		public static final String ARG_SECTION_NUMBER = "section_number";
 
+		public FileListFragment()
+		{
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
+		{
+			View rootView = inflater.inflate(R.layout.fragment_filelist_guest_joined_activity,container, false);
+			TextView dummyTextView = (TextView) rootView.findViewById(R.id.section_label);
+			dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+			
+			ArrayList<String> fileList = ServerInterface.getCurrentFileList(getActivity());
+			if (fileList != null)
+				System.out.println("FileList Size " + fileList.size());
+
+			if (fileList != null && fileList.size() != 0)
+			{
+				ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(FileListFragment.this.getActivity(),R.layout.activity_fileitem, fileList);
+				ListView lv = (ListView) rootView.findViewById(R.id.lv_fragment_filelist);
+				lv.setAdapter(arrayAdapter);
+			}
+			
+			
+			
+			return rootView;
+		}
+	}
+
+	public void syncFiles(View v) throws IOException
+	{
+		//ServerInterface.syncFiles(getApplicationContext());
+		 new SyncFilesTask().execute();		
+	}
+	
+	
+	 private class SyncFilesTask extends AsyncTask<String, Integer, String> 
+	   {
+
+		   Toast toast = Toast.makeText(getApplicationContext(), "Syncing files, please wait", Toast.LENGTH_LONG);
+		   @Override
+		   protected void onPreExecute() {
+		      super.onPreExecute();	
+		      toast.show();
+		   }
+	
+		 
+		   @Override
+		   protected void onProgressUpdate(Integer... values) 
+		   {
+		      super.onProgressUpdate(values);		
+		   }
+		 
+		   protected void onPostExecute(String result)
+		   {
+			   super.onPostExecute(result);
+			   System.out.println("Done Receiving files from server");
+			   toast.cancel();
+			  // finish();
+		   }
+
+			@Override
+			protected String doInBackground(String... params)
+			{				
+				ServerInterface.syncFiles(getApplicationContext());				
+				return null;
+			}
+		
+		
+	   }
+	
+	
 }

@@ -134,6 +134,7 @@
 		    android:layout_centerHorizontal="true"
 		    android:layout_gravity="center"
 		    android:drawableLeft="@drawable/add_remove_file"
+		    android:onClick="addFiles"
 		    android:text="@string/str_addremove_files" />
 		
 		<Button
