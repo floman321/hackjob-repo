@@ -24,6 +24,28 @@ public class Session
         hosts = new ArrayList<>();
     }
 
+    public void setAccessCode(String accessCode)
+    {
+        this.accessCode = accessCode;
+    }
+    
+    public boolean checkAccessCode(String accessCode)
+    {
+        if(accessCode.equals(this.accessCode))
+        {
+            return true;            
+        }
+        else            
+        {
+            return false;
+        }
+    }
+
+    public void setActive(boolean isActive)
+    {
+        this.isActive = isActive;
+    }
+
     public ArrayList<String> getDeviceList()
     {
         return devicesConnected;

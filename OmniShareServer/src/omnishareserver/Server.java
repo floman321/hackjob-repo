@@ -30,6 +30,9 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.nio.*;
+import java.nio.channels.ByteChannel;
+import java.nio.channels.Channel;
 
 public class Server implements Runnable
 {
@@ -81,8 +84,13 @@ public class Server implements Runnable
                 DataInputStream clientData = new DataInputStream(in);
                 String message ="";                
                 message = clientData.readUTF();
+                
+            //    ByteChannel nio =
+                
+                
 
-                String fileName = "RECEIVED_" + message;
+              //  String fileName = "RECEIVED_" + message;
+                String fileName = message;
                 System.out.println("Message " + message);
                 if (message.contains(".")) //ie is a file
                 {
@@ -114,10 +122,72 @@ public class Server implements Runnable
                 {
                    sendFiles(socket);      
                 }
+                else if (message.contains("FILES_SYNC")) //NEW STILL TESTING
+                {
+                   InputStream in2 = socket.getInputStream();
+                    ObjectInputStream ois = new ObjectInputStream(in2);
+                    ArrayList<String> guestList = (ArrayList<String>) ois.readObject();
+
+                    for(int i = 0; i < guestList.size(); i++)
+                    {
+                        System.out.println("newList @ " + i + "   " + guestList.get(i));
+                    }
+                    
+                   syncFiles(socket, guestList);    
+                   
+                }                
+                else if (message.contains("ACCESSCODE_AUTH"))
+                {
+                    // InputStream in2 = socket.getInputStream();
+                    ObjectInputStream ois = new ObjectInputStream(in);                 
+                    String accessCode = (String) ois.readObject();
+                    System.out.println("acces Code rec " + accessCode);
+                    Boolean result = currentSession.checkAccessCode(accessCode);
+                    
+                    //send response
+                    OutputStream os = socket.getOutputStream();
+                    ObjectOutputStream ous = new ObjectOutputStream(os);
+                    ous.writeObject(result);
+                    socket.close();
+                    ous.close();
+                    ois.close();
+                }
+                else if(message.contains("SET_ACCESSCODE"))
+                {
+                    ObjectInputStream ois = new ObjectInputStream(in);                 
+                    String accessCode = (String) ois.readObject();
+                    System.out.println("Set accessCode to " + accessCode);
+                    currentSession.setAccessCode(accessCode);
+                    ois.close();
+                }
+                else if(message.contains("SET_ACTIVE"))
+                {
+                    ObjectInputStream ois = new ObjectInputStream(in);                 
+                    Boolean active = (Boolean) ois.readObject();
+                    System.out.println("Set active to " + active);
+                    currentSession.setActive(active);
+                    ois.close();
+                }
+                else if(message.contains("IS_ACTIVE"))
+                {                              
+                    Boolean active = currentSession.isActive();
+                    System.out.println("is active  " + active);
+                 
+                    //send reply
+                    OutputStream os = socket.getOutputStream();
+                    ObjectOutputStream ous = new ObjectOutputStream(os);                    
+                   
+                    ous.writeObject(active);
+                    socket.close();
+                    ous.close();
+                    
+                    
+                }
 
             } catch (Exception e)
             {
-                e.printStackTrace();
+                System.out.println("Unidentified request, ignored...");
+                //e.printStackTrace();
             }
         }
 
@@ -132,9 +202,23 @@ public class Server implements Runnable
             socket.close();  	
         }
         
+        private void syncFiles(Socket socket, ArrayList<String> currentFiles) throws IOException, ClassNotFoundException
+        {
+            ArrayList<String> tempList = currentSession.getFileList();
+            for(int i = 0; i < tempList.size(); i++)
+            {
+                if(!currentFiles.contains(tempList.get(i)))//Only send files not in guest's list
+                {
+                    sendfile(new File(tempList.get(i)));
+                }
+            }
+              
+            socket.close();  	
+        }
+        
         private void sendfile(File file) throws FileNotFoundException, IOException
         {
-                System.out.println("Attemp to send file " + file.getName());
+                System.out.println("Attempt to send file " + file.getName());
                 byte[] mybytearray = new byte[(int) file.length()];  
 	          
 	        FileInputStream fis = new FileInputStream(file);  
