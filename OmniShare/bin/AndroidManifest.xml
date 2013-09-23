@@ -53,13 +53,29 @@
             android:name="com.example.omnishare.CreateMeeting"
             android:label="@string/title_activity_create_meeting" >
         </activity>
-        <activity            
+        <activity
             android:name="com.example.omnishare.AddFilesActivity"
-            android:label="@string/title_activity_add_files" 
+            android:label="@string/title_activity_add_files"
             android:parentActivityName="com.example.omnishare.MeetingListItemDetail" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.omnishare.MeetingListItemDetail" />
+        </activity>
+        <activity
+            android:name="com.example.omnishare.HostStartView"
+            android:label="@string/title_activity_host_start_view"
+            android:parentActivityName="com.example.omnishare.MeetingListItemDetail" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.omnishare.MeetingListItemDetail" />
+        </activity>
+        <activity
+            android:name="com.example.omnishare.DisplayImageActivity"
+            android:label="@string/title_activity_display_image" >
+        </activity>
+        <activity
+            android:name="com.example.omnishare.PdfhostviewActivity"
+            android:label="@string/title_activity_pdfhostview" >
         </activity>
     </application>
 

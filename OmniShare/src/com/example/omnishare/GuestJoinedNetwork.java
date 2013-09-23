@@ -274,17 +274,14 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 				ListView lv = (ListView) rootView.findViewById(R.id.lv_fragment_filelist);
 				lv.setAdapter(arrayAdapter);
 			}
-			
-			
-			
 			return rootView;
 		}
 	}
 
 	public void syncFiles(View v) throws IOException
 	{
-		//ServerInterface.syncFiles(getApplicationContext());
-		 new SyncFilesTask().execute();		
+		//ServerInterface.syncFiles(getApplicationContext());		
+		new SyncFilesTask().execute();			
 	}
 	
 	
@@ -317,11 +314,11 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 			protected String doInBackground(String... params)
 			{				
 				ServerInterface.syncFiles(getApplicationContext());				
-				return null;
+				return "Done with file get/sync";
 			}
-		
-		
 	   }
+	 
+
 	
 	
 }

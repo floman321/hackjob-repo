@@ -117,8 +117,7 @@
         android:id="@+id/lv_createmeetingfilelist"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="0.52"
-        android:entries="@array/strarr_meetingfilelist"/>
+        android:layout_weight="0.52"/>
 	
 	<RelativeLayout 
 	    android:id="@+id/fl_btnwrapper_createmeetingitem"

@@ -1,7 +1,9 @@
 package com.example.omnishare;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -60,6 +62,9 @@ public class ScanNetworks extends Activity{
        System.out.println("NETWORK ADDRESS FROM WIM " + IP);       
        
        new FindServerTask().execute(IP);	
+       
+       
+       
 	}
 	
 	public void switchme(View view){
@@ -93,20 +98,90 @@ public class ScanNetworks extends Activity{
 				{
 				      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 				      StrictMode.setThreadPolicy(policy);
-			    }
-				
-		        String tempIP = IP.substring(0, IP.length() - 3); //myIP.getHostAddress().toString().substring(0, myIP.getHostAddress().toString().length() - 3);
+			    }				
+	
+		        String newIP = "";
+		        int dotCount = 0;
+		        for(int i = 0; i < IP.length(); i++)
+		        {
+		        	if(dotCount < 3)
+		        	{
+		        		newIP += IP.charAt(i);
+		        	}
+		        	if(IP.charAt(i) == '.')
+		        	{
+		        		dotCount++;
+		        	}
+		        }
+		        
+		        System.out.println("NEW_IP " + newIP);
+		        
+		      //NEW FOR UDP
+		        try
+				{
+		        	System.out.println("1");
+		    		MulticastSocket socket = new MulticastSocket(5001);
+		            String requestString = "IS_OMNISHARE_HOST";
+		            byte[] buf = requestString.getBytes();
+		            InetAddress group = InetAddress.getByName("230.0.0.1");
+		        	socket.joinGroup(group);
+		        	int retry = 0;
+		        	
+		    		while(retry < 1000)//timeout if server not found.
+		            {
+		    		
+		            DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 5001);
+		            System.out.println("2");
+		            
+		            socket.send(packet);	            
+		            //listen for responses        		               
+		           
+		            System.out.println("3");
+		            publishProgress(50);
+		            
+		            
+		            	System.out.println("4");
+		                byte[] responsebuf = new byte[256];
+		                DatagramPacket responsePacket = new DatagramPacket(responsebuf, responsebuf.length);
+		                
+		                socket.receive(responsePacket);                
+		                String responseString = new String(responsePacket.getData(), 0, responsePacket.getLength());
+		              //  System.out.println("Data RESPONSE via UDP: " + responseString + " from host @ " + responsePacket.getAddress().getHostAddress());
+		                System.out.println("5");
+		                if(responseString.equals("OMNISHARE_TRUE"))
+		                {
+		                	System.out.println("REPLY VIA UDP " + responseString + " from host @ " + responsePacket.getAddress().getHostAddress());
+		                    
+		                	serverList.add(responsePacket.getAddress().getHostAddress());
+		                	socket.leaveGroup(group);
+		                	socket.close();
+		                	publishProgress(100);
+		                	break; // temporary, Needs to change to find more than one server
+		                }else
+		                {
+		                	retry++;
+		                	continue;
+		                }
+		            }
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+					System.out.println("ERROR WITH UDP SERVERLIST");
+				}
+		        System.out.println("6");
+		        publishProgress(100);
+		        
+		        /* OLD for tcp
 		        InetAddress tempAddr = null;
 		        Socket tempSocket = null;		        
 		        
 			    for(int i = 0; i < 256; i++)
-				{
-			    
-			    	
+				{		
 			    	publishProgress(i/2);
 					try
 					{		
-						tempAddr = InetAddress.getByName(tempIP + i);		
+						tempAddr = InetAddress.getByName(newIP + i);		
 						if(tempAddr.isReachable(200))
 			            {
 							System.out.println("IP " + i + " Was reachable");
@@ -130,6 +205,9 @@ public class ScanNetworks extends Activity{
 			                System.out.println ("Connection Refused @ " + i);				
 					}					
 				}    
+			    */
+			    
+			    
 		        System.out.println("ServerFinder return findOmniShareServers");        
 		        return serverList;
 		   }
@@ -162,7 +240,7 @@ public class ScanNetworks extends Activity{
 				        editor.commit();
 					}
 				});
-		      
+		      System.out.println("onPostExecute ServerFinder " + serverList.size());
 		      ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.activity_listnetwork_item, serverList);
 		      lv.setAdapter(adapter);
 		   }
