@@ -1,32 +1,21 @@
 package com.example.omnishare;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class AddFilesActivity extends ListActivity {
 
@@ -171,7 +160,8 @@ public class AddFilesActivity extends ListActivity {
             pb.setProgress(values[0]);
         }
 
-        protected void onPostExecute(String result) {
+        @Override
+		protected void onPostExecute(String result) {
             super.onPostExecute(result);
             System.out.println("Done sending files to server");
             Intent intent = getIntent();

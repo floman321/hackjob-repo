@@ -1,35 +1,26 @@
 package com.example.omnishare;
 
-//import java.util.ArrayList;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import net.sf.andpdf.pdfviewer.PdfViewerActivity;
+import com.example.omnishare.PdfhostviewActivity;
+
+
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 //import android.widget.TextView;
 import android.widget.TextView;
@@ -45,6 +36,14 @@ public class MeetingListItemDetail extends ListActivity
 	EditText meetingAccessCode;
 	
 	ArrayList<String> fileList = new ArrayList<String>();
+	
+	/*
+	ScreenCastManager mManager;
+	ServiceProvider mServiceProvider;
+	Dialog mAllShareDialog;
+	Dialog mNoAllShareCastDialog;
+	Boolean mAllShareEnabled;
+	*/
 	
 	@Override
 	protected void onStop()
@@ -99,9 +98,95 @@ public class MeetingListItemDetail extends ListActivity
 	                
 	                if(filePath.contains(".pdf"))
 	                {
+	                	
+	                /*	//VIR ALLSHARE
+	                	mAllShareDialog = new AlertDialog.Builder(MeetingListItemDetail.this).setMessage("AllShare Active")
+	            				.setPositiveButton("OK", new OnClickListener() {
+
+	            					@Override
+	            					public void onClick(DialogInterface dialog, int which) {
+	            						mManager.activateManagerUI();
+	            					}
+	            				}).setNegativeButton("EXIT", new OnClickListener() {
+
+	            					@Override
+	            					public void onClick(DialogInterface dialog, int which) {
+	            						finish();
+	            					}
+	            				}).setCancelable(false).create();
+
+	            		mNoAllShareCastDialog = new AlertDialog.Builder(MeetingListItemDetail.this)
+	            				.setMessage("AllShare notActive").setPositiveButton("OK", new OnClickListener() {
+
+	            					@Override
+	            					public void onClick(DialogInterface dialog, int which) {
+	            						finish();
+	            					}
+	            				}).setCancelable(false).create();
+	                	
+	                	
+	                	
+	                	
+	                	ServiceConnector.createServiceProvider(getApplicationContext(), new IServiceConnectEventListener() {
+
+	                		
+	                		
+	                		
+	                		
+	        				@Override
+	        				public void onCreated(ServiceProvider sprovider, ServiceState state) {
+	        					mServiceProvider = sprovider;
+	        					mManager = sprovider.getScreenCastManager();
+	        					if (mManager != null) {
+	        						mNoAllShareCastDialog.dismiss();
+	        						mAllShareDialog.show();
+	        						mManager.setScreenCastEventListener(new IScreenCastEventListener() {
+
+	        							@Override
+	        							public void onStopped(ScreenCastManager screencastmanager) {
+	        								mAllShareEnabled = false;
+	        								mAllShareDialog.show();
+	        							}
+
+	        							@Override
+	        							public void onStarted(ScreenCastManager screencastmanager) {
+	        								mAllShareEnabled = true;
+	        								mAllShareDialog.dismiss();
+	        								screencastmanager.setMode(ScreenMode.DUAL);
+	        							}
+	        						});
+
+	        						//FIGURE DIT UIT ??!?!
+	        						//SurfaceView mGameboard = new PokerTableView(GameActivity.this, mManager, mMemoryCache, roomName);
+	        						
+	        						
+	        					//	mGameActivityLayout.addView(mGameboard, 0);
+	        					//	mGameboard.startBus();
+	        						
+	        						
+	        						
+	        						
+	        						
+	        						
+	        					}
+	        				}
+
+	        				@Override
+	        				public void onDeleted(ServiceProvider sprovider) {
+	        				}
+	        			});
+	                	
+	                	
+	                	
+	                	*/
+	                	
+	                	//***********************
+	                	
 		                Intent pdfIntent = new Intent(getApplicationContext(), PdfhostviewActivity.class);
-		                pdfIntent.putExtra(PdfhostviewActivity.EXTRA_PDFFILENAME, filePath);
+		                pdfIntent.putExtra(PdfViewerActivity.EXTRA_PDFFILENAME, filePath);
 		                startActivity(pdfIntent);
+		                
+		                
 	                }
 					
 				}
@@ -202,6 +287,7 @@ public class MeetingListItemDetail extends ListActivity
 
 	}
 	
+		@Override
 		protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 			  System.out.println("REQ CODE " + requestCode + "  RES CODE " + resultCode);
 			
@@ -232,7 +318,7 @@ public class MeetingListItemDetail extends ListActivity
 				                if(filePath.contains(".pdf"))
 				                {
 					                Intent pdfIntent = new Intent(getApplicationContext(), PdfhostviewActivity.class);
-					                pdfIntent.putExtra(PdfhostviewActivity.EXTRA_PDFFILENAME, filePath);
+					                pdfIntent.putExtra(PdfViewerActivity.EXTRA_PDFFILENAME, filePath);
 					                startActivity(pdfIntent);
 				                }
 								
@@ -266,7 +352,8 @@ public class MeetingListItemDetail extends ListActivity
 	     //       pb.setProgress(values[0]);
 	        }
 
-	        protected void onPostExecute(String result) {
+	        @Override
+			protected void onPostExecute(String result) {
 	            super.onPostExecute(result);
 	            System.out.println("Done sending files to server");
 	      //      Intent intent = getIntent();

@@ -53,7 +53,7 @@ public class FlateDecode {
         Inflater inf = new Inflater(false);
 
         int bufSize = buf.remaining();
-
+      
         // set the input for the inflater
         byte[] data = null;
 
@@ -65,7 +65,22 @@ public class FlateDecode {
             // copy the data, since the array() method is not supported
             // on raf-based ByteBuffers
             data = new byte[bufSize];
-            buf.get(data);
+      //      buf.get(data);
+            
+            
+      
+            
+          
+       //     System.out.println("BUF REMAINING " + bufSize);
+            //MODIFIED to avoid buffer underflow errors
+        int i = 0;
+            while(buf.hasRemaining())// && i < bufSize)
+            {
+            	data[i++] = buf.get();
+            }
+       
+           
+          
             inf.setInput(data);
         }
 

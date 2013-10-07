@@ -1,5 +1,6 @@
 package net.sf.andpdf.pdfviewer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,34 +8,39 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
 import net.sf.andpdf.nio.ByteBuffer;
 import net.sf.andpdf.pdfviewer.gui.FullScrollView;
 import net.sf.andpdf.refs.HardReference;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.RectF;
-import android.graphics.Bitmap.Config;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,7 +48,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import com.sec.android.allshare.Device;
+import com.sec.android.allshare.Device.DeviceType;
+import com.sec.android.allshare.DeviceFinder;
+import com.sec.android.allshare.DeviceFinder.IDeviceFinderEventListener;
+import com.sec.android.allshare.ERROR;
+import com.sec.android.allshare.ServiceConnector;
+import com.sec.android.allshare.ServiceConnector.IServiceConnectEventListener;
+import com.sec.android.allshare.ServiceConnector.ServiceState;
+import com.sec.android.allshare.ServiceProvider;
+import com.sec.android.allshare.media.ViewController;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFImage;
 import com.sun.pdfview.PDFPage;
@@ -51,12 +69,12 @@ import com.sun.pdfview.decrypt.PDFAuthenticationFailureException;
 import com.sun.pdfview.decrypt.PDFPassword;
 import com.sun.pdfview.font.PDFFont;
 
-
+import net.sf.andpdf.pdfviewer.DevicePicker;
 /**
  * U:\Android\android-sdk-windows-1.5_r1\tools\adb push u:\Android\simple_T.pdf /data/test.pdf
  * @author ferenc.hechler
  */
-public abstract class PdfViewerActivity extends Activity {
+public abstract class PdfViewerActivity extends FragmentActivity {
 
 	private static final int STARTPAGE = 1;
 	private static final float STARTZOOM = 1.3f;
@@ -97,6 +115,7 @@ public abstract class PdfViewerActivity extends Activity {
     private File mTmpFile;
     private ProgressDialog progress;
 
+
     /*private View navigationPanel;
     private Handler closeNavigationHandler;
     private Thread closeNavigationThread;*/
@@ -107,13 +126,37 @@ public abstract class PdfViewerActivity extends Activity {
     private Thread backgroundThread;
     private Handler uiHandler;
 
-	
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		// return a reference to the current instance
-		Log.e(TAG, "onRetainNonConfigurationInstance");
-		return this;
-	}
+    
+    
+    //ALLSHARE
+
+        private String currentPageFilePath;
+        private Uri mImageUri = null;
+
+        // AllShare related fields
+        private DevicePicker mDevicePicker;
+        private AllShareService mAllShareService;
+
+        // activity UI related fields
+        private boolean mIsActivityVisible = false;
+        private ImageView mImageView = null;
+
+        private TextView mZoomTextView = null;
+        // ImageView dimensions used in multiple calculations
+        private int mImageViewWidth;
+
+        private int mImageViewHeight;
+        // helpers
+        private PinchToZoomTransformation mPinchToZoomTransformation;
+        private GestureHandler mGestureHandler;
+        private static final String IMAGE_PATH = "/tmp_AllShare_pdf";//.jpg"; // image path relative to sdcard
+        private static final String IMAGE_ASSET = "tmp_AllShare_pdf";//.jpg"; // image asset name
+        // indicates image rotation direction
+        public enum RotationDirection {
+            CLOCKWISE,
+            COUNTER_CLOCKWISE
+        }
+ 
 	/**
 	 * restore member variables from previously saved instance
 	 * @see onRetainNonConfigurationInstance
@@ -146,6 +189,7 @@ public abstract class PdfViewerActivity extends Activity {
         super.onCreate(savedInstanceState);
       
         Log.i(TAG, "onCreate");
+      
         //progress = ProgressDialog.show(PdfViewerActivity.this, "Loading", "Loading PDF Page");
         /*closeNavigationHandler = new Handler();
         closeNavigationThread = new Thread(new Runnable() {
@@ -166,7 +210,14 @@ public abstract class PdfViewerActivity extends Activity {
         
         uiHandler = new Handler();
         restoreInstance();
+        
+        mAllShareService = new AllShareService(getApplicationContext());
+        
         if (mOldGraphView != null) {
+        	
+        
+      	   
+	        System.out.println("mOldGraphView != null");
 	        mGraphView = new GraphView(this);
 	        //mGraphView.fileMillis = mOldGraphView.fileMillis;
 	        mGraphView.mBi = mOldGraphView.mBi;
@@ -179,9 +230,111 @@ public abstract class PdfViewerActivity extends Activity {
 	        mOldGraphView = null;
 	        mGraphView.mImageView.setImageBitmap(mGraphView.mBi);
 	        mGraphView.updateTexts();
+	       
 	        setContentView(mGraphView);
+	        
+	        
+	        
+	        
+	        
+	        //*********************************ALLSHARE****************************
+	             
+	        
+	        findUiElements();
+
+	        // checks if image to show exists; if not: create it
+	        copyAssets();
+	        
+	        // set the image to be shown
+	        File dir = Environment.getExternalStorageDirectory();
+	        File file = new File(dir, IMAGE_PATH);
+	        mImageUri = Uri.fromFile(file);
+
+	        if(IMAGE_PATH != null)
+	        {
+	        System.out.println("PDFFILE IMAGE_PATH " + IMAGE_PATH );
+	        }
+	        if(mImageUri != null)
+	        {
+	        	 System.out.println("\n mImageURI " + mImageUri);
+	        }
+	        else
+	        {
+	        	System.out.println("MIMAGEURI IS NULL");
+	        }
+	        
+	        System.out.println("DIR " + dir.getAbsolutePath());
+	        if(file != null)
+	        {
+	        	System.out.println("\n file " + file.getAbsolutePath());
+	        }
+	        
+	        mImageView = (ImageView) findViewById(R.id.pdf_image);
+	        if(mImageView == null)
+	        {
+	        	System.out.println("IMAGEVIEW NULL");
+	        }
+	        else
+	        {
+	        	System.out.println("IMAGE VIEW NOT NULL");
+	        }
+	        mImageView.setImageBitmap(decodeImage(file));
+
+	        mAllShareService = AllShareService.getInstance();
+	        
+
+	        if(mAllShareService == null)
+	        {
+	        	System.out.println("mAllShareService == null");
+	        	
+	        }
+	        
+	        mAllShareService.init(getApplicationContext());
+	        // creates GestureHandler instance
+	        mGestureHandler = new GestureHandler(this, mGestureHandlerListener);
+
+	        // listens for layout measurements finish
+	        ViewTreeObserver viewTreeObserver = mImageView.getViewTreeObserver();
+	        if (viewTreeObserver.isAlive()) {
+	            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+	                @Override
+	                public void onGlobalLayout() {
+	                    initialize();
+	                    System.out.println("GlobalLayout Listener");
+	                    scaleTv(0, mImageViewWidth / 2.0f, mImageViewHeight / 2.0f);
+	                }
+	            });
+	        }
+	         
+	         
+	         
+	         
+	         
+	         
+	         
+	         
+	         
+	         //*********************************ALLSHARE****************************
+	         
+	        
+	
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
         }
         else {
+        	System.out.println("mOldGraphView == null");
 	        mGraphView = new GraphView(this);	        
 	        Intent intent = getIntent();
 	        Log.i(TAG, ""+intent);
@@ -213,11 +366,350 @@ public abstract class PdfViewerActivity extends Activity {
 			setContent(null);
 	        
         }
-      //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        
+     
+        
+        
+        
+        
     }
-    	
-    
 
+    
+    /**
+    *
+    * Android UI related helper methods.
+    *
+    */
+
+   /**
+    * Finds UI elements and stores their references in class fields for later use.
+    */
+   private void findUiElements() {
+      // mImageView = (ImageView) findViewById(R.id.imageView);
+	   mImageView = (ImageView) findViewById(R.id.pdf_image);	   
+       mZoomTextView = (TextView) findViewById(R.id.zoomTextView);
+       mDevicePicker = (DevicePicker) getSupportFragmentManager().findFragmentById(R.id.devicePicker);
+     
+   }
+
+   /**
+    * Shows status message.
+    */
+   private void showStatusMessage(int message) {
+       if (mIsActivityVisible) {
+           Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+       }
+   }
+
+   /**
+    * Shows error message.
+    */
+   private void showErrorMessage(int message) {
+       Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+   }
+
+   /**
+    * Updates TextView with current scale.
+    *
+    * 100% means that image fits exactly in ImageView boundaries.
+    */
+   private void updateZoomTextViewText() {
+       mZoomTextView.setText((int) (getCurrentScale() * 100) + "%");
+   }
+
+   /**
+    * Updates ImageView with current transformation.
+    */
+   private void updateImageView() {
+       mImageView.setImageMatrix(mPinchToZoomTransformation.getMatrix());
+       mImageView.invalidate();
+   }
+
+   /**
+    * Returns image of smaller size so it fits in memory of devices with smaller heap.
+    */
+   private Bitmap decodeImage(File file) {
+       try {
+           BitmapFactory.Options o = new BitmapFactory.Options();
+           o.inPreferredConfig = Bitmap.Config.RGB_565;
+           Bitmap retval = BitmapFactory.decodeFile(file.getAbsolutePath(), o);
+           if(retval == null)
+           {
+        	   System.out.println("BITMAP RETURNED NULL");
+           }
+           
+           
+           return retval;
+       } catch (Exception e) {
+    	   System.out.println("UNABLE TO LAD IMAGE");
+         e.printStackTrace();
+          
+           return null;
+       }
+   }
+
+   /**
+    * Forces Android Framework to immediately remove bitmap data kept in memory.
+    */
+   private void destroyImageView() {
+       Drawable drawable = mImageView.getDrawable();
+       if (drawable instanceof BitmapDrawable) {
+           BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+           Bitmap bitmap = bitmapDrawable.getBitmap();
+           bitmap.recycle();
+       }
+
+       mImageView = null;
+   }
+   
+   /**
+    * Handles clockwise rotation button click.
+    */
+   private void onClockwiseRotateButtonClick() {
+       updateUiAndTvRotation(RotationDirection.CLOCKWISE);
+   }
+   
+   /**
+    * Handles counter clockwise rotation button click.
+    */
+   private void onCounterClockwiseRotateButtonClick() {
+       updateUiAndTvRotation(RotationDirection.COUNTER_CLOCKWISE);
+   }
+   
+   /**
+    * Handles reset button click.
+    */
+   private void onZoomResetButtonClick() {
+       // resets image view scale and translation and makes it fit in screen's center
+       mPinchToZoomTransformation.reset();
+       updateImageView();
+
+       updateZoomTextViewText();
+
+       scaleTv(0, mImageViewWidth / 2.0f, mImageViewHeight / 2.0f);
+   }
+
+
+   /**
+    * Listener responsible for handling ImageViewer/ViewController events.
+    */
+   private AllShareService.Listener mAllShareServiceListener = new AllShareService.Listener() {
+       @Override
+       public void onImageReady() {
+
+           System.out.println("IMAGE VIEWER READY");
+          
+           scaleTv(0, mImageViewWidth / 2.0f, mImageViewHeight / 2.0f);
+       }
+
+       @Override
+       public void onDisconnected() {
+           mDevicePicker.setActive(false);
+       }
+   };
+
+   /**
+    * Listener responsible for handling GestureHandler scale and translate events.
+    */
+   private GestureHandler.Listener mGestureHandlerListener = new GestureHandler.Listener() {
+       @Override
+       public void onScale(GestureHandler.ScaleEvent event) {
+           float scaleFactorDelta = event.getScaleFactorDelta();
+           float scalePointX = event.getScalePointX();
+           float scalePointY = event.getScalePointY();
+
+           // updates ImageViewer and ViewController on scale event
+           updateUiAndTvScale(scaleFactorDelta, scalePointX, scalePointY);
+       }
+   };
+
+   /**
+    *
+    * Transformation related methods.
+    *
+    */
+   
+   /**
+    * Initializes mPinchToZoomTransformation.
+    *
+    * After initialization subsequent calls will be ignored.
+    *
+    * Must be called after Android finished layout measurements and after drawable was set on ImageView.
+    */
+   private void initialize() {
+       if (mPinchToZoomTransformation == null && mImageView != null && mImageView.getDrawable() != null) {
+           int imageWidth = mImageView.getDrawable().getIntrinsicWidth();
+           int imageHeight = mImageView.getDrawable().getIntrinsicHeight();
+           mImageViewWidth = mImageView.getMeasuredWidth();
+           mImageViewHeight = mImageView.getMeasuredHeight();
+
+           mPinchToZoomTransformation = new PinchToZoomTransformation(
+                   imageWidth,
+                   imageHeight,
+                   mImageViewWidth,
+                   mImageViewHeight);
+           mPinchToZoomTransformation.setMaxScale(5);
+
+           mImageView.setScaleType(ImageView.ScaleType.MATRIX);
+           mPinchToZoomTransformation.setScaleToFitInCenter();
+
+           updateImageView();
+       }
+   }
+
+   /**
+    * Updates application UI and image on TV according to scale values.
+    */
+   private float getCurrentScale() {
+       RectF imageRect = mPinchToZoomTransformation.getRect();
+
+       float imageViewRatio = (float) mImageViewWidth / mImageViewHeight;
+       float imageRatio = imageRect.width() / imageRect.height();
+
+       return imageViewRatio < imageRatio ?
+               imageRect.width() / mImageViewWidth :
+               imageRect.height() / mImageViewHeight;
+   }
+
+   /**
+    * Updates application UI and image on TV according to scale values.
+    */
+   private void updateUiAndTvScale(float scaleFactorDelta, float scalePointX, float scalePointY) {
+       // rounds scale values so that they are the same as those accepted by ViewController
+       float roundedScaleFactorDelta = (float) ((int) (scaleFactorDelta * 100)) / 100;
+       float roundedScalePointX = (int) scalePointX;
+       float roundedScalePointY = (int) scalePointY;
+
+       // applies rounded scale to transformation object
+       // additionally the scale that was applied after bounds check is stored in newScaleFactorDelta
+       float newScaleFactorDelta =
+           mPinchToZoomTransformation.updateScaleInBounds(
+                   roundedScaleFactorDelta, roundedScalePointX, roundedScalePointY);
+
+       updateImageView();
+
+       scaleTv(newScaleFactorDelta, roundedScalePointX, roundedScalePointY);
+
+       updateZoomTextViewText();
+   }
+
+   /**
+    * Updates application UI and image on TV according to rotation values.
+    */
+   private void updateUiAndTvRotation(RotationDirection rotationDirection) {
+       PinchToZoomTransformation.RotationDirection pinchToZoomRotationDirection =
+           rotationDirection == RotationDirection.CLOCKWISE ?
+           PinchToZoomTransformation.RotationDirection.CLOCKWISE :
+           PinchToZoomTransformation.RotationDirection.COUNTER_CLOCKWISE;
+
+       mPinchToZoomTransformation.updateRotationAndFitInBounds(pinchToZoomRotationDirection);
+
+       updateImageView();
+
+       scaleTv(0, mImageViewWidth / 2.0f, mImageViewHeight / 2.0f);
+
+       updateZoomTextViewText();
+   }
+
+   /**
+    * Abstracts call to ViewController.zoom() method.
+    */
+   private void scaleTv(float scaleFactorDelta, float scalePointX, float scalePointY) {
+       if (mAllShareService.isImageReady()) {
+           int tvScalePointX = (int) scalePointX;
+           int tvScalePointY = (int) scalePointY;
+           int tvScaleFactorDelta = (int) (scaleFactorDelta * 100);
+
+           int rotation = mPinchToZoomTransformation.getRotation();
+
+           mAllShareService.getViewController().zoom(
+                   tvScalePointX,
+                   tvScalePointY,
+                   tvScaleFactorDelta,
+                   rotation,
+                   mImageViewWidth,
+                   mImageViewHeight);
+       }
+   }
+
+   /**
+    * Function creates image file from application asset.
+    */
+   private void copyAssets() {
+       AssetManager assetManager = getAssets();
+        
+       InputStream in = null;
+       OutputStream out = null;
+       try {
+       	File dir = Environment.getExternalStorageDirectory();
+       	File file = new File(dir, IMAGE_PATH + mPage + ".jpg");
+
+			if (file.exists() == false) {
+				
+				in = assetManager.open(IMAGE_ASSET);
+				out = new FileOutputStream(file);
+
+				byte[] buffer = new byte[1024];
+				int read;
+				
+				while ((read = in.read(buffer)) != -1) {
+					out.write(buffer, 0, read);
+				}
+			}
+       }
+       catch (IOException e) {
+
+           System.out.println("UNABLE TO LoAD IMAGE");
+       }
+       finally {
+           try {
+               if (in != null) in.close();
+           } catch (IOException ignored) {
+               // Ignore
+           }
+           try {
+               if (out != null) out.close();
+           } catch (IOException ignored) {
+               // Ignore
+           }
+       }
+   }
+   
+   @Override
+   protected void onStart() {
+       super.onStart();
+
+       mIsActivityVisible = true;
+
+       if(mAllShareService == null)
+       {
+    	   System.out.println("mAllShareService == null");
+       }
+       if(mAllShareServiceListener == null)
+       {
+    	   System.out.println("mAllShareServiceListener == null");
+       }
+       if(mDevicePicker == null)
+       {
+    	   System.out.println("mDevicePicker == null");
+    	   mDevicePicker = new DevicePicker();
+    	//   mDevicePicker = (DevicePicker) getSupportFragmentManager().findFragmentById(R.id.devicePicker);
+       }
+       if(mDevicePicker == null)
+       {
+    	   System.out.println("mDevicePicker == null");
+    	 //  mDevicePicker = new DevicePicker();
+       }
+        
+       
+       mAllShareService.registerListener(mAllShareServiceListener);       
+       mAllShareService.init(getApplicationContext());       
+       
+       
+   }
+
+
+   //***********************************
 	private void setContent(String password) {
         try { 
     		parsePDF(pdffilename, password);
@@ -294,6 +786,10 @@ public abstract class PdfViewerActivity extends Activity {
 					progress.dismiss();*/
 			}
 		}, 1000);
+		
+		
+		
+		
 	}
 
 	
@@ -405,6 +901,8 @@ public abstract class PdfViewerActivity extends Activity {
     			mGraphView.bZoomIn.setEnabled(true);
     			progress = ProgressDialog.show(PdfViewerActivity.this, "Loading", "Loading PDF Page " + mPage, true, true);
     			startRenderThread(mPage, mZoom);
+    			
+    		
     		}
     	}
 	}
@@ -509,6 +1007,10 @@ public abstract class PdfViewerActivity extends Activity {
 			vl.setLayoutParams(lpWrap10);
 			vl.setOrientation(LinearLayout.VERTICAL);
 
+			
+			
+			
+			
 			if (mOldGraphView == null)
 				progress = ProgressDialog.show(PdfViewerActivity.this, "Loading", "Loading PDF Page", true, true);
 			
@@ -592,6 +1094,8 @@ public abstract class PdfViewerActivity extends Activity {
 			hl.setLayoutParams(lpWrap10);
 			hl.setOrientation(LinearLayout.HORIZONTAL);
 
+			
+			
 				// zoom out button
 				bZoomOut=new ImageButton(context);
 				bZoomOut.setBackgroundDrawable(null);
@@ -710,12 +1214,13 @@ public abstract class PdfViewerActivity extends Activity {
         private void updateImage() {
         	uiHandler.post(new Runnable() {
 				public void run() {
-		        	mImageView.setImageBitmap(mBi);
-		        	
-		        	/*if (progress != null)
-		        		progress.dismiss();*/
+		        	mImageView.setImageBitmap(mBi);  
+		        
+			      
 				}
 			});
+        	
+        	
 		}
 
 		private void setPageBitmap(Bitmap bi) {
@@ -769,6 +1274,13 @@ public abstract class PdfViewerActivity extends Activity {
 		}*/
     }
 
+	@Override
+	protected void onStop()
+	{		
+		super.onStop();
+		mAllShareService.disconnect();
+	//	cleanupTempFiles();
+	}
 	
 	
     private void showPage(int page, float zoom) throws Exception {
@@ -796,6 +1308,16 @@ public abstract class PdfViewerActivity extends Activity {
 	        mGraphView.setPageBitmap(bi);
 	        mGraphView.updateImage();
 	        
+	        
+	       writeTempFileToDisc(bi);
+	
+	      
+	        File dir = Environment.getExternalStorageDirectory();
+	        File file = new File(dir, IMAGE_PATH+ mPage +".jpg");
+	        mImageUri = Uri.fromFile(file);			       
+	        System.out.println("Displaying " + mImageUri.getPath());	      
+	        mAllShareService.start(mImageUri.getPath() );
+	        
 	        if (progress != null)
 	        	progress.dismiss();
 		} catch (Throwable e) {
@@ -807,7 +1329,51 @@ public abstract class PdfViewerActivity extends Activity {
         //mGraphView.pageRenderMillis = stopTime-middleTime;
     }
     
-    private void parsePDF(String filename, String password) throws PDFAuthenticationFailureException {
+    private void cleanupTempFiles()
+    {
+    	File directory = Environment.getExternalStorageDirectory();   
+    	File[] listOfFiles = directory.listFiles();
+    	System.out.println("Cleanup CAlled");
+        for (int i = 0; i < listOfFiles.length; i++) 
+        {
+          if (listOfFiles[i].isFile() && listOfFiles[i].getAbsolutePath().contains("tmp_AllShare_pdf")) 
+          {
+        	  listOfFiles[i].delete();
+          } 
+        }
+    }
+    
+    private void writeTempFileToDisc(Bitmap bi) throws IOException
+    {
+        //write file for use in AllShare ImageViewer
+    	File directory = Environment.getExternalStorageDirectory();        	
+    	String filename = "tmp_AllShare_pdf";//.jpg";
+        File f = new File(directory + "/" + filename + mPage  +".jpg");  
+        
+        System.out.println("WRITE TEMPDPF FILE " + f.getAbsolutePath()) ;
+        if(f.exists())
+        {
+        	f.delete();
+        }
+        f = new File(directory + "/" + filename + mPage  +".jpg"); 
+        f.createNewFile();      
+        
+        currentPageFilePath = f.getAbsolutePath();
+        //Convert bitmap to byte array
+        Bitmap bitmap = bi;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(CompressFormat.JPEG,  100, bos); //100% of max quality
+        byte[] bitmapdata = bos.toByteArray();
+
+        //write the bytes in file
+        FileOutputStream fos = new FileOutputStream(f);
+        fos.write(bitmapdata);
+        fos.flush();
+        fos.close();
+        bos.close();
+     }
+
+	private void parsePDF(String filename, String password) throws PDFAuthenticationFailureException {
         //long startTime = System.currentTimeMillis();
     	try {
         	File f = new File(filename);

@@ -17,13 +17,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="10" />
-        
-    <ImageButton android:id="@+id/zoom_in"
-        android:text="Zoom In"
-        android:src="@drawable/zoom_in"
+    
+
+         
+    <ImageButton
+        android:id="@+id/zoom_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="10" />
+        android:layout_weight="10"
+        android:src="@drawable/zoom_in"
+        android:text="Zoom In" />
         
     <TextView android:id="@+id/navigation_page_position_label"
     	android:text="1/1"
@@ -46,5 +49,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="10" />
-
+   <TextView
+            android:id="@+id/zoomTextView"
+            android:layout_width="96dp"
+            android:layout_height="42dp"
+            android:layout_alignLeft="@+id/counterClockwiseRotateButton"
+            android:layout_alignRight="@+id/clockwiseRotateButton"
+            android:layout_below="@+id/zoomLabelTextView"
+            android:background="#36ffffff"
+            android:gravity="top|center_horizontal"
+            android:onClick="onButtonClick"
+            android:text="100%"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+   
+           <fragment
+        android:id="@+id/devicePicker"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        class="net.sf.andpdf.pdfviewer.DevicePicker"
+        android:src="@drawable/zoom_out" />
 </LinearLayout>

@@ -2,11 +2,8 @@ package com.example.omnishare;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -116,6 +113,7 @@ public class CreateMeeting extends Activity
 		
 	}	
 	
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		  if (requestCode == 1) {
 

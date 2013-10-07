@@ -10,17 +10,13 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.ObjectInputStream.GetField;
 import java.net.Socket;
 import java.util.ArrayList;
-
-import com.example.omnishare.GuestJoinedNetwork.FileListFragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.StrictMode;
-import java.nio.*;
 public class ServerInterface
 {
 	

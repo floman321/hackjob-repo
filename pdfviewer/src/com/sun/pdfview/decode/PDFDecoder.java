@@ -85,11 +85,14 @@ public class PDFDecoder {
                         null, dict, streamBuf);
             }
 
-            for (int i = 0; i < ary.length; i++) {
+            for (int i = 0; i < ary.length; i++)           
+            {
                 String enctype = ary[i].getStringValue();
+                System.out.println("ARY["+i+"]  " + ary[i]);
                 if (enctype == null) {
-                } else if (enctype.equals("FlateDecode") || enctype.equals("Fl")) {
-                    streamBuf = FlateDecode.decode(dict, streamBuf, params[i]);
+                } else if (enctype.equals("FlateDecode") || enctype.equals("Fl")) {             	
+                    streamBuf = FlateDecode.decode(dict, streamBuf, params[i]);  
+                    return streamBuf.duplicate();
                 } else if (enctype.equals("LZWDecode") || enctype.equals("LZW")) {
                     streamBuf = LZWDecode.decode(streamBuf, params[i]);
                 } else if (enctype.equals("ASCII85Decode") || enctype.equals("A85")) {
