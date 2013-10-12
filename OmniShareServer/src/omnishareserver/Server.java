@@ -84,12 +84,7 @@ public class Server implements Runnable
                 DataInputStream clientData = new DataInputStream(in);
                 String message ="";                
                 message = clientData.readUTF();
-                
-            //    ByteChannel nio =
-                
-                
 
-              //  String fileName = "RECEIVED_" + message;
                 String fileName = message;
                 System.out.println("Message " + message);
                 if (message.contains(".")) //ie is a file
@@ -171,23 +166,19 @@ public class Server implements Runnable
                 else if(message.contains("IS_ACTIVE"))
                 {                              
                     Boolean active = currentSession.isActive();
-                    System.out.println("is active  " + active);
-                 
+                    System.out.println("is active  " + active);                 
                     //send reply
                     OutputStream os = socket.getOutputStream();
-                    ObjectOutputStream ous = new ObjectOutputStream(os);                    
+                    ObjectOutputStream ous = new ObjectOutputStream(os);                   
                    
                     ous.writeObject(active);
                     socket.close();
                     ous.close();
-                    
-                    
                 }
 
             } catch (Exception e)
             {
                 System.out.println("Unidentified request, ignored...");
-                //e.printStackTrace();
             }
         }
 
@@ -197,8 +188,7 @@ public class Server implements Runnable
             for(int i = 0; i < tempList.size(); i++)
             {
                 sendfile(new File(tempList.get(i)));
-            }
-              
+            }              
             socket.close();  	
         }
         
@@ -211,8 +201,7 @@ public class Server implements Runnable
                 {
                     sendfile(new File(tempList.get(i)));
                 }
-            }
-              
+            }              
             socket.close();  	
         }
         
@@ -234,11 +223,7 @@ public class Server implements Runnable
 	        dos.writeUTF(file.getName());     
 	        dos.writeLong(mybytearray.length);     
 	        dos.write(mybytearray, 0, mybytearray.length);     
-	        dos.flush();      
-	              
-	   //    fis.close();
-	   //     bis.close();
-	   //     dos.close();             
+	        dos.flush();        
         }
     }
 
@@ -256,18 +241,15 @@ public class Server implements Runnable
         }catch(Exception e)
         {
             return false;
-        }
-        
+        }        
         return retval;
     }
 
     public void go()
     {
-
         try
         {
             serverSocket = new ServerSocket(5000);
-
             while (currentSession.isActive())
             {
                 Socket clientSocket = serverSocket.accept();
@@ -310,7 +292,11 @@ public class Server implements Runnable
         return currentSession;
     }
     
-
-    
-    
+    public void shutdown() throws IOException
+    {
+        if(serverSocket!= null)
+        {   
+            serverSocket.close();
+        }
+    }
 }

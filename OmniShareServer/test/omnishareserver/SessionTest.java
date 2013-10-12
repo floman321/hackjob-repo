@@ -15,22 +15,7 @@ import static org.junit.Assert.*;
  * @author Skimmel
  */
 public class SessionTest
-{
-    
-    public SessionTest()
-    {
-    }
-    
-    @Before
-    public void setUp()
-    {
-    }
-    
-    @After
-    public void tearDown()
-    {
-    }
-
+{    
     /**
      * Test of addDevice method, of class Session.
      */
@@ -112,4 +97,6 @@ public class SessionTest
         assertEquals(expResult, result);
         
     }
+    
+    
 }
