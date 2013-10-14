@@ -117,8 +117,7 @@
         android:id="@+id/lv_createmeetingfilelist"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="0.52"
-        android:entries="@array/strarr_meetingfilelist"/>
+        android:layout_weight="0.52"/>
 	
 	<RelativeLayout 
 	    android:id="@+id/fl_btnwrapper_createmeetingitem"
@@ -134,6 +133,7 @@
 		    android:layout_centerHorizontal="true"
 		    android:layout_gravity="center"
 		    android:drawableLeft="@drawable/add_remove_file"
+		    android:onClick="addFiles"
 		    android:text="@string/str_addremove_files" />
 		
 		<Button
