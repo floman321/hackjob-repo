@@ -40,6 +40,8 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	
+	ChordMain chordmain;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,9 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		
+		chordmain = new ChordMain(this.getApplicationContext());
+		chordmain.startChord();
 	}
 
 	@Override
