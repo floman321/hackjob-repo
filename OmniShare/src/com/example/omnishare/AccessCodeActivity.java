@@ -50,7 +50,8 @@ public class AccessCodeActivity extends Activity
 		else
 		{
 			Intent returnIntent = new Intent();
-			setResult(RESULT_CANCELED, returnIntent);
+			//setResult(RESULT_CANCELED, returnIntent); THIS IS THE RIGHT ONE
+			setResult(RESULT_OK, returnIntent);
 	        finish();
 		}
 	}

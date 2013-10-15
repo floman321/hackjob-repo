@@ -202,6 +202,7 @@ public class ChordMain {
             /**
              * 6. Send data to joined node
              */
+        	sendToAll(fromNode, fromChannel);
             System.out.println("A device has joined chord network");
            // mLogView.appendLog("    sendData(" + fromNode + ", " + new String(payload[0]) + ")");
         }
@@ -216,6 +217,8 @@ public class ChordMain {
             /**
              * 6. Received data from other node
              */
+        	System.out.println(new String(payload[0]));
+        	
             if(payloadType.equals(MESSAGE_NEW_FILE_UPLOADED)){
                 //mLogView.appendLog("    >onDataReceived(" + fromNode + ", " + new String( payload[0]) + ")");
             }
