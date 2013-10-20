@@ -23,6 +23,32 @@ public class MyMeetings extends ListActivity{
 	DBController dbController = new DBController(this);
 	TextView meetingId;
 	
+	
+	@Override
+	protected void onResume()
+	{
+		System.out.println("On resume");
+		//update current list of meetings
+		ArrayList<HashMap<String, String>> meetingList = dbController.getAllMeetings();			
+		ListView lv = getListView();		
+		lv.setOnItemClickListener(new OnItemClickListener() 
+		{
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,int position, long id)
+			{
+				meetingId = (TextView) view.findViewById(R.id.meetingId);
+				String valmeetingId = (meetingId.getText() != null ? meetingId.getText().toString() : "");
+				Intent objIndent = new Intent(getApplicationContext(), MeetingListItemDetail.class);
+				objIndent.putExtra("meetingId", valmeetingId);
+				startActivity(objIndent);
+			}
+		});
+		
+		ListAdapter adapter = new SimpleAdapter(this, meetingList, R.layout.activity_listmeetingextracheese, new String[] {"meetingId", "meetingName" }, new int[] {R.id.meetingId, R.id.meetingName });
+		lv.setAdapter(adapter);				
+		super.onResume();
+	}
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) 
 	{

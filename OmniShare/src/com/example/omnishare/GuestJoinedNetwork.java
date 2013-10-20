@@ -1,10 +1,18 @@
 package com.example.omnishare;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
+
+import net.sf.andpdf.pdfviewer.PdfViewerActivity;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +24,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class GuestJoinedNetwork extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -31,6 +44,8 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
 
+	ChordMain chordmain;
+	
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
@@ -41,6 +56,8 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_guest_joined_network);
 
+		
+		
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -77,6 +94,10 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		
+		chordmain = new ChordMain(this.getApplicationContext());
+		chordmain.startChord();
+		
 	}
 
 	@Override
@@ -136,11 +157,43 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			Fragment fragment = new DummySectionFragment();
-			Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment.setArguments(args);
-			return fragment;
+			switch(position)
+			{
+				case 0:
+				{
+					Fragment fragment = new DummySectionFragment();
+					Bundle args = new Bundle();
+					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;					
+				}
+				case 1:
+				{
+					Fragment fragment = new FileListFragment();
+					Bundle args = new Bundle();
+					args.putInt(FileListFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;					
+				}
+				case 2:
+				{
+					Fragment fragment = new DummySectionFragment();
+					Bundle args = new Bundle();
+					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;					
+				}
+				default:
+				{
+					Fragment fragment = new DummySectionFragment();
+					Bundle args = new Bundle();
+					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+					fragment.setArguments(args);
+					return fragment;
+				}
+			
+			}
+			
 		}
 
 		@Override
@@ -177,19 +230,144 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 
 		public DummySectionFragment() {
 		}
+		
+		
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(
-					R.layout.fragment_guest_joined_network_dummy, container,
-					false);
+			View rootView = inflater.inflate(R.layout.fragment_guest_joined_network_dummy, container,false);
 			TextView dummyTextView = (TextView) rootView
 					.findViewById(R.id.section_label);
 			dummyTextView.setText(Integer.toString(getArguments().getInt(
 					ARG_SECTION_NUMBER)));
+			
+		
+			 
+			return rootView;
+		}
+	}
+	
+	
+	public static class FileListFragment extends Fragment
+	{
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		public static final String ARG_SECTION_NUMBER = "section_number";
+
+		public FileListFragment()
+		{
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
+		{
+			View rootView = inflater.inflate(R.layout.fragment_filelist_guest_joined_activity,container, false);
+			TextView dummyTextView = (TextView) rootView.findViewById(R.id.section_label);
+			dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+			
+			final ArrayList<String> fileList = ServerInterface.getCurrentFileList(getActivity());
+			
+
+			if (fileList != null && fileList.size() != 0)
+			{
+				ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(FileListFragment.this.getActivity(),R.layout.activity_fileitem, fileList);
+				ListView lv = (ListView) rootView.findViewById(R.id.lv_fragment_filelist);
+				
+				lv.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,int position, long id)
+					{
+						TextView fileName = (TextView) view.findViewById(R.id.rowtext);
+						String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
+						
+						File directory = Environment.getExternalStorageDirectory();
+						
+						
+						String filePath = directory.getAbsolutePath() + "/" + fileList.get(position);
+						String tempFilePathString = filePath.toLowerCase();
+						
+		                System.out.println("CurrentView Onclick " + filePath);
+		                
+		                if(tempFilePathString.contains(".pdf"))
+		                {
+		                	Intent pdfIntent = new Intent(getActivity(), PdfGuestViewActivity.class);
+			                pdfIntent.putExtra(PdfGuestViewActivity.EXTRA_PDFFILENAME, filePath);	
+			                startActivity(pdfIntent);		                
+		                }else
+	                	if(tempFilePathString.contains(".jpg") || tempFilePathString.contains(".jpeg") || tempFilePathString.contains(".bmp") || tempFilePathString.contains(".png"))
+		                {
+		                	Intent intent = new Intent(getActivity(), DisplayImageActivity.class);
+		                	intent.putExtra("filePath", filePath);
+		                	startActivity(intent);		                
+		                }
+	                	else
+	                	if(tempFilePathString.contains(".ppt"))
+		                {
+		                	Intent intent = new Intent(getActivity(), PPTViewActivity.class);
+		                	intent.putExtra("filePath", filePath);
+		                	startActivity(intent);		                
+		                }
+	                	else
+	                	{
+		                	Intent intent = new Intent(getActivity(), DisplayVideoActivity.class);
+		                	intent.putExtra("filePath", filePath);
+		                	startActivity(intent);		                
+		                }						
+					}
+				});
+				
+				lv.setAdapter(arrayAdapter);
+			}
 			return rootView;
 		}
 	}
 
+	public void syncFiles(View v) throws IOException
+	{
+		//ServerInterface.syncFiles(getApplicationContext());		
+		new SyncFilesTask().execute();			
+	}
+	
+	
+	 private class SyncFilesTask extends AsyncTask<String, Integer, String> 
+	   {
+
+		   Toast toast = Toast.makeText(getApplicationContext(), "Syncing files, please wait", Toast.LENGTH_LONG);
+		   @Override
+		   protected void onPreExecute() {
+		      super.onPreExecute();	
+		      toast.show();
+		   }
+	
+		 
+		   @Override
+		   protected void onProgressUpdate(Integer... values) 
+		   {
+		      super.onProgressUpdate(values);		
+		   }
+		 
+		   @Override
+		protected void onPostExecute(String result)
+		   {
+			   super.onPostExecute(result);
+			   System.out.println("Done Receiving files from server");
+			   toast.cancel();
+			  // finish();
+		   }
+
+			@Override
+			protected String doInBackground(String... params)
+			{				
+				ServerInterface.syncFiles(getApplicationContext());				
+				return "Done with file get/sync";
+			}
+	   }
+	 
+
+	
+	
 }
