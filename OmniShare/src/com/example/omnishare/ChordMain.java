@@ -9,19 +9,24 @@ import com.samsung.chord.IChordManagerListener;
 import com.samsung.chord.ChordManager.INetworkListener;
 
 import android.content.Context;
+import android.widget.Toast;
 
 public class ChordMain {
+	protected static final String HOST_SENDPDF_PAGE_UPDATE = "1";
+	protected static final String GUEST_REQUEST_PDFPAGE = "3";
 	protected static final String MESSAGE_NEW_FILE_UPLOADED = "2";
-	protected static final String CHANNEL_JOINED = "Device Joined Channel";
+	protected static final String CHANNEL_JOINED = "BOOBCHANNEL";
 	protected ChordManager mChordManager = null;
 	protected boolean bStarted = false;
 	protected int mSelectedInterface = -1;
+	private Context currContext;
 	
-	ChordMain(Context context){
+	public ChordMain(Context context){
 		/****************************************************
          * 1. GetInstance
          ****************************************************/
         
+		currContext = context;
         mChordManager = ChordManager.getInstance(context);                
         //mLogView.appendLog("    getInstance");
 
@@ -60,7 +65,7 @@ public class ChordMain {
         });
 	}
 	
-	protected void startChord() {
+	public void startChord() {
         /**
          * 3. Start Chord using the first interface in the list of available
          * interfaces.
@@ -93,7 +98,7 @@ public class ChordMain {
 	/**
      * ChordManagerListener
      */
-	protected IChordManagerListener mManagerListener = new IChordManagerListener() {
+	public IChordManagerListener mManagerListener = new IChordManagerListener() {
 
         @Override
         public void onStarted(String nodeName, int reason) {
@@ -107,6 +112,7 @@ public class ChordMain {
             if (reason == STARTED_BY_USER) {
                 // Success to start by calling start() method
               //  mLogView.appendLog("    >onStarted(" + nodeName + ", STARTED_BY_USER)");
+            	//myNode = nodeName;
                 joinTestChannel();
             } else if (reason == STARTED_BY_RECONNECTION) {
                 // Re-start by network re-connection.
@@ -154,6 +160,7 @@ public class ChordMain {
          */
        // mLogView.appendLog("    joinChannel");
         channel = mChordManager.joinChannel(CHANNEL_JOINED, mChannelListener);
+        //myChannel = channel.getName();
 
         if (channel == null) {
           //  mLogView.appendLog("    Fail to joinChannel");
@@ -182,7 +189,7 @@ public class ChordMain {
     // ***************************************************
     // ChordChannelListener
     // ***************************************************
-    protected IChordChannelListener mChannelListener = new IChordChannelListener() {
+    public IChordChannelListener mChannelListener = new IChordChannelListener() {
 
         /**
          * Called when a node leave event is raised on the channel.
@@ -202,7 +209,7 @@ public class ChordMain {
             /**
              * 6. Send data to joined node
              */
-        	sendToAll(fromNode, fromChannel);
+        	//sendToAll(fromNode, fromChannel);
             System.out.println("A device has joined chord network");
            // mLogView.appendLog("    sendData(" + fromNode + ", " + new String(payload[0]) + ")");
         }
@@ -217,6 +224,18 @@ public class ChordMain {
             /**
              * 6. Received data from other node
              */
+        	
+        	if(payloadType.equals(HOST_SENDPDF_PAGE_UPDATE)){
+        		Integer mPageNum = Integer.parseInt(new String(payload[0]));
+        		
+        	} else if (payloadType.equals(GUEST_REQUEST_PDFPAGE)){
+        		
+        	} else if (Integer.parseInt(payloadType) == 2){
+        		ServerInterface.syncFiles(currContext);
+        		
+        	} else {
+        		
+        	}
         	System.out.println(new String(payload[0]));
         	
             if(payloadType.equals(MESSAGE_NEW_FILE_UPLOADED)){
@@ -308,11 +327,17 @@ public class ChordMain {
 
     };
     
-    protected void sendToAll(String fromNode, String fromChannel){
+    public void sendToAll(String message, int messageType){
     	byte[][] payload = new byte[1][];
-        payload[0] = "BOOOOOOOOOOOOBS".getBytes();
-
-        IChordChannel channel = mChordManager.getJoinedChannel(fromChannel);
-        channel.sendData(fromNode, MESSAGE_NEW_FILE_UPLOADED, payload);
+        payload[0] = message.getBytes();
+        
+        IChordChannel channel = mChordManager.getJoinedChannel(CHANNEL_JOINED);
+        //add message type switch here
+        
+        channel.sendDataToAll(MESSAGE_NEW_FILE_UPLOADED, payload);
+    }
+    
+    public ChordManager getChordManager(){
+    	return mChordManager;
     }
 }

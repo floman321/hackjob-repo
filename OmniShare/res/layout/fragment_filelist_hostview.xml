@@ -20,11 +20,12 @@
         android:layout_height="351dp" />
 
    <Button
-       android:id="@+id/btn_suggest"
+       android:id="@+id/btn_host_addfile"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_alignLeft="@+id/lv_fragment_filelist"
        android:layout_alignParentBottom="true"
+       android:onClick="addFilesHost"
        android:text="Add a file" />
 
 </RelativeLayout>
