@@ -240,9 +240,18 @@ public abstract class PdfGuestViewerActivity extends Activity {
 			});
         }
 	}
+	
+	public Thread getBackgroundThread()
+	{
+		return backgroundThread;
+	}
+	
 	private synchronized void startRenderThread(final int page, final float zoom) {
+	
 		if (backgroundThread != null)
+		{	
 			return;
+		}
 		
 		mGraphView.showText("reading page "+ page+", zoom:"+zoom);
 		//progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page");
@@ -409,7 +418,6 @@ public abstract class PdfGuestViewerActivity extends Activity {
     	if (mPdfFile != null) {
     		if (mPage < mPdfFile.getNumPages()) {
     			mPage = targetPage;
-    			System.out.println("Current Page " + mPage + " This is where CHORD notifications can go.");
     			mGraphView.bZoomOut.setEnabled(true);
     			mGraphView.bZoomIn.setEnabled(true);
     			progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page " + mPage, true, true);
@@ -794,7 +802,7 @@ public abstract class PdfGuestViewerActivity extends Activity {
 	        mGraphView.updateImage();
 	        
 	        // Only load the page if it's a different page (i.e. not just changing the zoom level) 
-	        if (mPdfPage == null || mPdfPage.getPageNumber() != page) {
+	        if (mPdfPage == null || mPdfPage.getPageNumber() != page) { //was page
 	        	mPdfPage = mPdfFile.getPage(page, true);
 	        }
 	        //int num = mPdfPage.getPageNumber();
