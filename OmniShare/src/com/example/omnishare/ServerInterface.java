@@ -372,7 +372,7 @@ public class ServerInterface
 		return retval;
 	}
 	
-	public static boolean isActive(Context context)
+	public static boolean isActive(String hostAddress, Context context)
 	{
 		boolean retval = false;
 		if (android.os.Build.VERSION.SDK_INT > 9) // TO ALLOW FOR PERMISSIONS TO OPEN NEW SOCKET ON ANDROID DEVICES
@@ -381,9 +381,7 @@ public class ServerInterface
 					.permitAll().build();
 			StrictMode.setThreadPolicy(policy);
 		}
-
-		SharedPreferences settings = context.getSharedPreferences("OmniShareHostsFile", 0);
-		String hostAddress = settings.getString("Host", "NO_HOST_SET");
+		
 
 		if(!hostAddress.equals("NO_HOST_SET"))
 		{

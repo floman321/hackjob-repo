@@ -3,6 +3,7 @@ package com.example.omnishare;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import net.sf.andpdf.pdfviewer.PdfViewerActivity;
@@ -26,7 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -98,6 +101,14 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		chordmain = new ChordMain(this.getApplicationContext());
 		chordmain.startChord();
 		
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		chordmain.stopChord();
 	}
 
 	@Override
@@ -324,7 +335,52 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 			}
 			return rootView;
 		}
+		
+	
 	}
+	
+	public void suggestFile(View v)
+	{
+		System.out.println("SuggestFile Clicked");
+		Intent intent = new Intent(getBaseContext(), AddFilesActivity.class);
+		String falseMeetingId = "-1";
+		intent.putExtra("meetingId", falseMeetingId);
+		startActivityForResult(intent, 1);	
+	}
+
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		System.out.println("REQ CODE " + requestCode + "  RES CODE " + resultCode);
+		
+		if (requestCode == 1) 
+		{
+		     if(resultCode == RESULT_OK)
+		     {    
+		    	ArrayList<String> fileList = data.getStringArrayListExtra("fileList");
+		    	if(fileList != null && !fileList.isEmpty())
+		    	{
+		    		chordmain.sendToAll(fileList.get(0), 4);
+		    	}
+		    	else
+		    	{
+		    		if(fileList == null)
+		    		{
+		    			System.out.println("fileList in result = null");
+		    		}
+		    	}
+		    	
+		 	 }		 
+	     }
+	     if (resultCode == RESULT_CANCELED)
+	     {  
+	    	 
+	     }
+     }
+		
+		
+	
 
 	public void syncFiles(View v) throws IOException
 	{

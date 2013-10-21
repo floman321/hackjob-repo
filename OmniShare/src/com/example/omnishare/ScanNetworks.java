@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -32,6 +33,8 @@ import android.widget.Toast;
 
 public class ScanNetworks extends Activity{
 	
+	public String myIP = "";
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,10 +49,10 @@ public class ScanNetworks extends Activity{
         	System.out.println("Enabling WIFI...");        	
         	wim.setWifiEnabled(true);        
         }
-       String IP = Formatter.formatIpAddress(wim.getConnectionInfo().getIpAddress());
-       System.out.println("NETWORK ADDRESS FROM WIM " + IP);       
+        myIP = Formatter.formatIpAddress(wim.getConnectionInfo().getIpAddress());
+       System.out.println("NETWORK ADDRESS FROM WIM " + myIP);       
        
-       new FindServerTask().execute(IP);	       
+       new FindServerTask().execute(myIP);	       
 	}
 	
 	public void switchme(View view)
@@ -98,6 +101,10 @@ public class ScanNetworks extends Activity{
 		}	
 	}
 	
+	public void refresh(View v)
+	{		
+		 new FindServerTask().execute(myIP);			
+	}
 	
 	   private class FindServerTask extends AsyncTask<String, Integer, HashMap<String,String>> 
 	   {
@@ -119,20 +126,7 @@ public class ScanNetworks extends Activity{
 				      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 				      StrictMode.setThreadPolicy(policy);
 			    }				
-	
-		        String newIP = "";
-		        int dotCount = 0;
-		        for(int i = 0; i < IP.length(); i++)
-		        {
-		        	if(dotCount < 3)
-		        	{
-		        		newIP += IP.charAt(i);
-		        	}
-		        	if(IP.charAt(i) == '.')
-		        	{
-		        		dotCount++;
-		        	}
-		        }
+			
 		        //Find Servers using UDP BroadCast packets.
 		        try
 				{		       
@@ -158,7 +152,10 @@ public class ScanNetworks extends Activity{
 		                	
 		                	String value = responsePacket.getAddress().getHostAddress();
 		                	String key = ServerInterface.getMeetingName(value, getApplicationContext());
-		                	serverList.put(key, value); //k = name, v = ip
+		                	if(ServerInterface.isActive(value, getApplicationContext()))
+		                	{
+		                		serverList.put(key, value); //k = name, v = ip
+		                	}
 		                	//serverList.add(responsePacket.getAddress().getHostAddress());
 		                	//serverNameList.add(ServerInterface.getMeetingName(responsePacket.getAddress().getHostAddress(), getApplicationContext()));
 		                	socket.leaveGroup(group);

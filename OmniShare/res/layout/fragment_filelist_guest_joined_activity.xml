@@ -34,6 +34,7 @@
        android:layout_height="wrap_content"
        android:layout_alignLeft="@+id/btn_syncfiles"
        android:layout_alignParentBottom="true"
-       android:text="Suggest a file" />
+       android:text="Suggest a file" 
+       android:onClick="suggestFile"/>
 
 </RelativeLayout>

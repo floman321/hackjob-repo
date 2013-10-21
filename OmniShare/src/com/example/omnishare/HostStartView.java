@@ -7,12 +7,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+
+
 import net.sf.andpdf.pdfviewer.PdfViewerActivity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +28,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -54,6 +63,73 @@ public class HostStartView extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 	ChordMain chordmain;
+	MessageReceiver broadcastReceiver;
+		
+	//For handling File-Suggest Functionality - Gives host the opportunity to accept/decline a file
+		private class MessageReceiver extends BroadcastReceiver 
+		{		
+			@Override
+			   public void onReceive(Context context, Intent intent) 
+			   {    
+					System.out.println("BroadcastReceiver on receive FILESUGGEST_MESSAGE");			
+				
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(HostStartView.this);	 
+					// set title
+					alertDialogBuilder.setTitle("Please Verify File Upload");
+					final TextView fileNameTextView = new TextView(getApplicationContext());			
+					
+					final String fileName = intent.getStringExtra("suggestedFileName");
+					final String toNode = intent.getStringExtra("fromNode");					
+							
+					
+					fileNameTextView.setText(fileName);
+					
+					// set dialog message
+					alertDialogBuilder.setView(fileNameTextView);			
+					alertDialogBuilder								
+						.setCancelable(false)
+						.setPositiveButton("Allow",new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,int id)
+							{
+								chordmain.sendTo(toNode, "true " + fileName, 5);
+							}
+						  }).setNegativeButton("Don't Allow",new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,int id)
+								{
+									chordmain.sendTo(toNode, "false ", 5);
+								}
+							  });
+				
+				AlertDialog alert = alertDialogBuilder.create();
+				alert.show();
+				
+			   }
+		}
+		
+
+		@Override
+		protected void onResume()
+		{
+			// TODO Auto-generated method stub
+			super.onResume();
+			registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
+		}
+		
+		@Override
+		protected void onPause()
+		{
+			// TODO Auto-generated method stub
+			super.onPause();
+			unregisterReceiver(broadcastReceiver);
+		}
+		
+		@Override
+		protected void onDestroy()
+		{
+			// TODO Auto-generated method stub
+			super.onDestroy();
+			chordmain.stopChord();
+		}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +176,8 @@ public class HostStartView extends FragmentActivity implements
 		
 		chordmain = new ChordMain(this.getApplicationContext());
 		chordmain.startChord();
+		broadcastReceiver = new MessageReceiver();		
+		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
 	}
 
 	@Override

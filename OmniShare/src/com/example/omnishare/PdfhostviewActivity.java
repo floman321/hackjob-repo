@@ -1,26 +1,62 @@
 package com.example.omnishare;
 
 
+
 import net.sf.andpdf.pdfviewer.PdfViewerActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 public class PdfhostviewActivity extends PdfViewerActivity
 {
 
 	ChordMain chordmain;
+	MessageReceiver broadcastReceiver;
+	
+	private class MessageReceiver extends BroadcastReceiver 
+	{		
+		@Override
+		   public void onReceive(Context context, Intent intent) 
+		   {    
+				System.out.println("BroadcastReceiver on receive");				
+				sendPageNotification();
+		   }
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
-	{
+	{		
+		super.onCreate(savedInstanceState);		
 		chordmain = new ChordMain(getApplicationContext());
 		chordmain.startChord();
-		super.onCreate(savedInstanceState);
+		broadcastReceiver = new MessageReceiver();		
+		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.PDFREQUEST_MESSAGE"));	
 	}
+	
+	@Override
+	protected void onResume()
+	{
+		// TODO Auto-generated method stub
+		super.onResume();		
+		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
+	}
+	
+	@Override
+	protected void onPause()
+	{
+		// TODO Auto-generated method stub
+		super.onPause();
+		unregisterReceiver(broadcastReceiver);
+	}
+	
 	@Override
 	protected void onDestroy()
-	{		
+	{
+		// TODO Auto-generated method stub
 		super.onDestroy();
-		
+		chordmain.stopChord();
 	}
 	
 	@Override

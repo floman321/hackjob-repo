@@ -13,15 +13,19 @@ import android.view.Menu;
 public class PdfGuestViewActivity extends PdfGuestViewerActivity
 {
 	ChordMain chordmain;
-	ReceiveMessages broadcastReceiverMessages;
+	MessageReceiver broadcastReceiver;
 	
-	private class ReceiveMessages extends BroadcastReceiver 
+	private class MessageReceiver extends BroadcastReceiver 
 	{		
 		@Override
 		   public void onReceive(Context context, Intent intent) 
 		   {    
-				System.out.println("BroadcastReceiver on receive");				
-				setPage(Integer.parseInt(intent.getStringExtra("pageNumber")));
+				System.out.println("BroadcastReceiver on receive");			
+				int newPage = Integer.parseInt(intent.getStringExtra("pageNumber"));
+				if(newPage != getPage())
+				{
+					setPage(newPage);
+				}
 		   }
 	}
 	
@@ -31,16 +35,40 @@ public class PdfGuestViewActivity extends PdfGuestViewerActivity
 		super.onCreate(savedInstanceState);		
 		chordmain = new ChordMain(getApplicationContext());
 		chordmain.startChord();
-		broadcastReceiverMessages = new ReceiveMessages();		
-		registerReceiver(broadcastReceiverMessages, new IntentFilter("com.example.omnishare.PDFUPDATE_MESSAGE"));	
+		broadcastReceiver = new MessageReceiver();		
+		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.PDFUPDATE_MESSAGE"));	
+		
+		//request current page from host
+		String message = "Page_Request";	
+		chordmain.sendToAll(message, 3);
+		
 	}
 	
 	@Override
-	protected void onStop()
+	protected void onResume()
 	{
 		// TODO Auto-generated method stub
-		super.onStop();
-		unregisterReceiver(broadcastReceiverMessages);
+		super.onResume();
+		String message = "Page_Request";
+		chordmain.sendToAll(message, 3);
+		
+		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
+	}
+
+	@Override
+	protected void onPause()
+	{
+		// TODO Auto-generated method stub
+		super.onPause();
+		unregisterReceiver(broadcastReceiver);
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		super.onDestroy();		
+		chordmain.stopChord();
 	}
 
 	

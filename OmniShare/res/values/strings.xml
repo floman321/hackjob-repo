@@ -34,5 +34,6 @@
     <string name="title_activity_display_video">DisplayVideoActivity</string>
     <string name="title_activity_pptview">PPTViewActivity</string>
     <string name="title_activity_pdf_guest_view">PdfGuestViewActivity</string>
+    <string name="title_activity_host_scan_networks">HostScanNetworksActivity</string>
 
 </resources>

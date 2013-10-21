@@ -97,7 +97,7 @@ public class AddFilesActivity extends ListActivity {
             new AlertDialog.Builder(this).setIcon(R.drawable.ic_launcher).setTitle("[" + file.getName() + "] was added to the meeting.").setPositiveButton("OK", null).show();
             
             /*
-             * INSERT selected file to db (this is surprisingly quick)
+             * INSERT selected file to db 
              */
             Intent intent = getIntent();
             String queryid = intent.getStringExtra("meetingId");
@@ -114,18 +114,14 @@ public class AddFilesActivity extends ListActivity {
 	            	
 	                fileList.add(file.getAbsolutePath());
 	                System.out.println("File " + file.getAbsolutePath() + "  added to fileList");
-	                
-	               
 	            }
-	            
-	           
             }
             else
             {
             	if (!fileList.contains(file.getAbsolutePath()));
  	            {
  	                fileList.add(file.getAbsolutePath());
- 	                System.out.println("File " + file.getAbsolutePath() + "  added to fileList");
+ 	                System.out.println("File " + file.getAbsolutePath() + "  added to fileList queryID null");
  	            }
             }  
         }
@@ -142,42 +138,5 @@ public class AddFilesActivity extends ListActivity {
         
     }
 
-    private class SendFilesTask extends AsyncTask<ArrayList<String>, Integer, String> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            System.out.println("onPreExecute() SendFilesTask");
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            System.out.println("Progress at " + values[0]);
-
-            ProgressBar pb = (ProgressBar) findViewById(R.id.progressBarAddFiles);
-            pb.setProgress(values[0]);
-        }
-
-        @Override
-		protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            System.out.println("Done sending files to server");
-            Intent intent = getIntent();
-            intent.putStringArrayListExtra("fileList", fileList);
-            finish();
-        }
-
-        @Override
-        protected String doInBackground(ArrayList<String>... inputs) {
-            float counter = 100 / inputs[0].size();
-            for (int i = 0; i < inputs[0].size(); i++) {
-                ServerInterface.sendFile(new File(inputs[0].get(i)), getApplicationContext());
-                publishProgress((int) ((i + 1) * counter));
-            }
-
-            return "Done sending files to server";
-        }
-    }
 }

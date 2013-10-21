@@ -1,5 +1,6 @@
 package com.example.omnishare;
 
+import java.io.File;
 import java.util.List;
 
 import com.samsung.chord.ChordManager;
@@ -16,11 +17,17 @@ public class ChordMain {
 	protected static final String HOST_SENDPDF_PAGE_UPDATE = "1";
 	protected static final String GUEST_REQUEST_PDFPAGE = "3";
 	protected static final String MESSAGE_NEW_FILE_UPLOADED = "2";
+	//For handling File-Suggest Functionality 
+	//4 Payload = fileName
+	//5 payload = boolean result + fileName
+	protected static final String MESSAGE_SUGGESTFILE = "4";
+	protected static final String MESSAGE_SUGGESTFILE_RESPONSE = "5";
 	protected static final String CHANNEL_JOINED = "BOOBCHANNEL";
 	protected ChordManager mChordManager = null;
 	protected boolean bStarted = false;
 	protected int mSelectedInterface = -1;
 	private Context currContext;
+	
 	
 	public ChordMain(Context context){
 		/****************************************************
@@ -235,10 +242,36 @@ public class ChordMain {
         		
         	} else if (payloadType.equals(GUEST_REQUEST_PDFPAGE)){
         		
+        		System.out.println("GUEST_REQUEST_PDFPAGE message received");        		
+        		Intent broadcastIntent = new Intent("com.example.omnishare.PDFREQUEST_MESSAGE");		
+        		currContext.sendBroadcast(broadcastIntent);
+        		
         	} else if (Integer.parseInt(payloadType) == 2){
         		ServerInterface.syncFiles(currContext);
         		
-        	} else {
+        	} else if (payloadType.equals(MESSAGE_SUGGESTFILE)){   //For handling File-Suggest Functionality
+        		System.out.println("MESSAGE_SUGGESTFILE message received");   
+        		String suggestedFileName = new String(payload[0]);
+        		System.out.println("suggestedFileName " + suggestedFileName);  
+        		Intent broadcastIntent = new Intent("com.example.omnishare.FILESUGGEST_MESSAGE");
+        		broadcastIntent.putExtra("suggestedFileName", suggestedFileName);
+        		broadcastIntent.putExtra("fromNode", fromNode);        		
+        		currContext.sendBroadcast(broadcastIntent);
+        		
+        	}else if(payloadType.equals(MESSAGE_SUGGESTFILE_RESPONSE)) //For handling File-Suggest Functionality
+        	{
+        		System.out.println("MESSAGE_SUGGESTFILE_RESPONSE message received");   
+        		String result = new String(payload[0]);
+        		String fileName = (result.substring(result.indexOf(" "))).trim();
+        		result = result.substring(0, result.indexOf(" "));
+        		System.out.println("MESSAGE_SUGGESTFILE_RESPONSE _" + result + "_ will try to send file _" + fileName + "_ ");  
+        		if(result.equals("true"))
+        		{
+        			ServerInterface.sendFile(new File(fileName), currContext);
+        		}
+        	}
+        	
+        	else {
         		
         	}
         	System.out.println("Payload " + new String(payload[0]) + " payloadType " + payloadType);
@@ -341,6 +374,18 @@ public class ChordMain {
         String messageString = messageType + "";
         channel.sendDataToAll(messageString, payload);
     }
+    
+  //For handling File-Suggest Functionality - Used by host to reply to node that made file suggestion
+    public void sendTo(String fromNode, String message, int messageType){
+    	byte[][] payload = new byte[1][];
+        payload[0] = message.getBytes();
+        
+        IChordChannel channel = mChordManager.getJoinedChannel(CHANNEL_JOINED);
+        //add message type switch here
+        String messageString = messageType + "";
+        channel.sendData(fromNode, messageString, payload);
+    }
+    
     
     public ChordManager getChordManager(){
     	return mChordManager;

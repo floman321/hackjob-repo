@@ -58,8 +58,7 @@ public class MeetingListItemDetail extends ListActivity
 
 		Intent intent = getIntent();
 		String queryid = intent.getStringExtra("meetingId");
-		HashMap<String, String> meetingList = dbController
-				.getMeetingInfo(queryid);
+		HashMap<String, String> meetingList = dbController.getMeetingInfo(queryid);
 
 		if (meetingList.size() != 0)
 		{
@@ -117,9 +116,6 @@ public class MeetingListItemDetail extends ListActivity
 		queryValues.put("meetingDate", meetingDate.getText().toString());
 		queryValues.put("meetingCode", meetingAccessCode.getText().toString());
 		dbController.updateMeeting(queryValues);
-		
-	
-
 		finish();
 	}
 	
@@ -136,10 +132,6 @@ public class MeetingListItemDetail extends ListActivity
 	}
 	
 	public void switchHostViewStarter(View view){
-		
-		final int id = view.getId();
-		switch(id){
-		case R.id.btn_startAsHost:
 			//ADDED TO START ASYNC FILE TRANSFER BEFORE SWITCHING ACTIVITY
 			Intent intent = getIntent();
 			String queryid = intent.getStringExtra("meetingId");
@@ -177,8 +169,7 @@ public class MeetingListItemDetail extends ListActivity
 	 		myIntent.putExtra("meetingId", queryid);
 			//myIntent.putExtra("key", value); //Optional parameters
 	 		MeetingListItemDetail.this.startActivity(myIntent);
-			break;
-		}		
+	
 	}
 
 	public void callHomeActivity(View view)
@@ -213,7 +204,7 @@ public class MeetingListItemDetail extends ListActivity
 			 		{
 			 			ListView lv = getListView();
 			 			
-			 			lv.setOnItemClickListener(new OnItemClickListener() 
+			 	/*		lv.setOnItemClickListener(new OnItemClickListener() 
 			 			{
 			 				@Override //FOR TEST ONLY
 							public void onItemClick(AdapterView<?> parent, View view,int position, long id)
@@ -233,7 +224,7 @@ public class MeetingListItemDetail extends ListActivity
 				                }
 								
 							}
-			 			});
+			 			});*/
 			 			
 			 			ListAdapter adapter = new SimpleAdapter(this, meetingFileList, R.layout.activity_fileitemrepresentation, new String[] {"fileId", "fileName" }, new int[] {R.id.fileId, R.id.fileName });
 			 			lv.setAdapter(adapter);
