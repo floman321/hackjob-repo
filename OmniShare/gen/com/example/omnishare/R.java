@@ -19,6 +19,14 @@ public final class R {
     }
     public static final class attr {
     }
+    public static final class color {
+        /** 
+        Base application theme for API 11+. This theme completely replaces
+        AppBaseTheme from res/values/styles.xml on API 11+ devices.
+    
+         */
+        public static final int custom_theme_color=0x7f090000;
+    }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
 
@@ -55,96 +63,96 @@ public final class R {
         public static final int zoom_out=0x7f020012;
     }
     public static final class id {
-        public static final int action_forgot_password=0x7f0a0058;
-        public static final int action_settings=0x7f0a0059;
-        public static final int btExit=0x7f0a0056;
-        public static final int btOK=0x7f0a0057;
-        public static final int btnConfiguration=0x7f0a0033;
-        public static final int btnFinishAddFiles=0x7f0a0002;
-        public static final int btnMyMeetings=0x7f0a0035;
-        public static final int btnPlay=0x7f0a0017;
-        public static final int btnScanAvailableNetworks=0x7f0a0034;
-        public static final int btn_addremovefile=0x7f0a002c;
-        public static final int btn_createNewMeeting=0x7f0a0037;
-        public static final int btn_createaddremovefile=0x7f0a0014;
-        public static final int btn_createsave=0x7f0a0015;
-        public static final int btn_host_addfile=0x7f0a0048;
-        public static final int btn_host_refresh=0x7f0a0020;
-        public static final int btn_joinnetwork=0x7f0a0007;
-        public static final int btn_removeMeeting=0x7f0a002e;
-        public static final int btn_save=0x7f0a002d;
-        public static final int btn_startAsHost=0x7f0a002f;
-        public static final int btn_suggest=0x7f0a0047;
-        public static final int btn_syncfiles=0x7f0a0046;
-        public static final int btnppt_back=0x7f0a003a;
-        public static final int btnppt_forward=0x7f0a0039;
-        public static final int buttons=0x7f0a003f;
-        public static final int cancel_button=0x7f0a0040;
-        public static final int clockwiseRotateButton=0x7f0a0052;
-        public static final int counterClockwiseRotateButton=0x7f0a0051;
-        public static final int deviceIcon=0x7f0a003b;
-        public static final int deviceName=0x7f0a003c;
-        public static final int devicePicker=0x7f0a0054;
-        public static final int devicePickerIcon=0x7f0a003d;
-        public static final int edit_text_createdateofmeeting=0x7f0a000e;
-        public static final int edit_text_createlocation=0x7f0a000c;
-        public static final int edit_text_createmeetingaccesscode=0x7f0a0010;
-        public static final int edit_text_createmeetingname=0x7f0a000a;
-        public static final int edit_text_dateofmeeting=0x7f0a0027;
-        public static final int edit_text_location=0x7f0a0025;
-        public static final int edit_text_meetingaccesscode=0x7f0a0029;
-        public static final int edit_text_meetingname=0x7f0a0023;
-        public static final int etPassword=0x7f0a0055;
-        public static final int fileId=0x7f0a0019;
-        public static final int fileName=0x7f0a001a;
-        public static final int fl_btnwrapper_createmeetingitem=0x7f0a0013;
-        public static final int fl_btnwrapper_host_networksitem=0x7f0a001f;
-        public static final int fl_btnwrapper_meetingitem=0x7f0a002b;
-        public static final int fl_btnwrapper_networksitem=0x7f0a0006;
-        public static final int imageView_displayimage=0x7f0a0016;
-        public static final int imageview_ppt=0x7f0a0038;
-        public static final int lv_createmeetingfilelist=0x7f0a0012;
-        public static final int lv_fragment_filelist=0x7f0a0045;
-        public static final int lv_host_networkslist=0x7f0a001d;
-        public static final int lv_meetingslist=0x7f0a004a;
-        public static final int lv_networkslist=0x7f0a0004;
-        public static final int meetingId=0x7f0a0030;
-        public static final int meetingName=0x7f0a0031;
-        public static final int navigation_next=0x7f0a004f;
-        public static final int navigation_page_position_label=0x7f0a004d;
-        public static final int navigation_previous=0x7f0a004e;
-        public static final int networkhost=0x7f0a0032;
-        public static final int no_devices=0x7f0a003e;
-        public static final int pagenum_edit=0x7f0a0043;
-        public static final int pager=0x7f0a001b;
-        public static final int path=0x7f0a0000;
-        public static final int pdf_image=0x7f0a0049;
-        public static final int progressBarAddFiles=0x7f0a0001;
-        public static final int progressBar_findNetworks=0x7f0a0005;
-        public static final int progressBar_host_findNetworks=0x7f0a001e;
-        public static final int refresh_button=0x7f0a0041;
-        public static final int rowtext=0x7f0a0018;
-        public static final int section_label=0x7f0a0044;
-        public static final int text_view_availablenetworks=0x7f0a0003;
-        public static final int text_view_createcurrattachedfiles=0x7f0a0011;
-        public static final int text_view_createdateofmeeting=0x7f0a000d;
-        public static final int text_view_createlocation=0x7f0a000b;
-        public static final int text_view_createmeeting=0x7f0a0008;
-        public static final int text_view_createmeetingaccesscode=0x7f0a000f;
-        public static final int text_view_createmeetingname=0x7f0a0009;
-        public static final int text_view_currattachedfiles=0x7f0a002a;
-        public static final int text_view_dateofmeeting=0x7f0a0026;
-        public static final int text_view_host_availablenetworks=0x7f0a001c;
-        public static final int text_view_location=0x7f0a0024;
-        public static final int text_view_meeting=0x7f0a0021;
-        public static final int text_view_meetingaccesscode=0x7f0a0028;
-        public static final int text_view_meetingname=0x7f0a0022;
-        public static final int txtv_MeetingsHead=0x7f0a0036;
-        public static final int username_view=0x7f0a0042;
-        public static final int zoomLabelTextView=0x7f0a0053;
-        public static final int zoomTextView=0x7f0a0050;
-        public static final int zoom_in=0x7f0a004c;
-        public static final int zoom_out=0x7f0a004b;
+        public static final int action_forgot_password=0x7f0b0058;
+        public static final int action_settings=0x7f0b0059;
+        public static final int btExit=0x7f0b0056;
+        public static final int btOK=0x7f0b0057;
+        public static final int btnConfiguration=0x7f0b0033;
+        public static final int btnFinishAddFiles=0x7f0b0002;
+        public static final int btnMyMeetings=0x7f0b0035;
+        public static final int btnPlay=0x7f0b0017;
+        public static final int btnScanAvailableNetworks=0x7f0b0034;
+        public static final int btn_addremovefile=0x7f0b002c;
+        public static final int btn_createNewMeeting=0x7f0b0037;
+        public static final int btn_createaddremovefile=0x7f0b0014;
+        public static final int btn_createsave=0x7f0b0015;
+        public static final int btn_host_addfile=0x7f0b0048;
+        public static final int btn_host_refresh=0x7f0b0020;
+        public static final int btn_joinnetwork=0x7f0b0007;
+        public static final int btn_removeMeeting=0x7f0b002e;
+        public static final int btn_save=0x7f0b002d;
+        public static final int btn_startAsHost=0x7f0b002f;
+        public static final int btn_suggest=0x7f0b0047;
+        public static final int btn_syncfiles=0x7f0b0046;
+        public static final int btnppt_back=0x7f0b003a;
+        public static final int btnppt_forward=0x7f0b0039;
+        public static final int buttons=0x7f0b003f;
+        public static final int cancel_button=0x7f0b0040;
+        public static final int clockwiseRotateButton=0x7f0b0052;
+        public static final int counterClockwiseRotateButton=0x7f0b0051;
+        public static final int deviceIcon=0x7f0b003b;
+        public static final int deviceName=0x7f0b003c;
+        public static final int devicePicker=0x7f0b0054;
+        public static final int devicePickerIcon=0x7f0b003d;
+        public static final int edit_text_createdateofmeeting=0x7f0b000e;
+        public static final int edit_text_createlocation=0x7f0b000c;
+        public static final int edit_text_createmeetingaccesscode=0x7f0b0010;
+        public static final int edit_text_createmeetingname=0x7f0b000a;
+        public static final int edit_text_dateofmeeting=0x7f0b0027;
+        public static final int edit_text_location=0x7f0b0025;
+        public static final int edit_text_meetingaccesscode=0x7f0b0029;
+        public static final int edit_text_meetingname=0x7f0b0023;
+        public static final int etPassword=0x7f0b0055;
+        public static final int fileId=0x7f0b0019;
+        public static final int fileName=0x7f0b001a;
+        public static final int fl_btnwrapper_createmeetingitem=0x7f0b0013;
+        public static final int fl_btnwrapper_host_networksitem=0x7f0b001f;
+        public static final int fl_btnwrapper_meetingitem=0x7f0b002b;
+        public static final int fl_btnwrapper_networksitem=0x7f0b0006;
+        public static final int imageView_displayimage=0x7f0b0016;
+        public static final int imageview_ppt=0x7f0b0038;
+        public static final int lv_createmeetingfilelist=0x7f0b0012;
+        public static final int lv_fragment_filelist=0x7f0b0045;
+        public static final int lv_host_networkslist=0x7f0b001d;
+        public static final int lv_meetingslist=0x7f0b004a;
+        public static final int lv_networkslist=0x7f0b0004;
+        public static final int meetingId=0x7f0b0030;
+        public static final int meetingName=0x7f0b0031;
+        public static final int navigation_next=0x7f0b004f;
+        public static final int navigation_page_position_label=0x7f0b004d;
+        public static final int navigation_previous=0x7f0b004e;
+        public static final int networkhost=0x7f0b0032;
+        public static final int no_devices=0x7f0b003e;
+        public static final int pagenum_edit=0x7f0b0043;
+        public static final int pager=0x7f0b001b;
+        public static final int path=0x7f0b0000;
+        public static final int pdf_image=0x7f0b0049;
+        public static final int progressBarAddFiles=0x7f0b0001;
+        public static final int progressBar_findNetworks=0x7f0b0005;
+        public static final int progressBar_host_findNetworks=0x7f0b001e;
+        public static final int refresh_button=0x7f0b0041;
+        public static final int rowtext=0x7f0b0018;
+        public static final int section_label=0x7f0b0044;
+        public static final int text_view_availablenetworks=0x7f0b0003;
+        public static final int text_view_createcurrattachedfiles=0x7f0b0011;
+        public static final int text_view_createdateofmeeting=0x7f0b000d;
+        public static final int text_view_createlocation=0x7f0b000b;
+        public static final int text_view_createmeeting=0x7f0b0008;
+        public static final int text_view_createmeetingaccesscode=0x7f0b000f;
+        public static final int text_view_createmeetingname=0x7f0b0009;
+        public static final int text_view_currattachedfiles=0x7f0b002a;
+        public static final int text_view_dateofmeeting=0x7f0b0026;
+        public static final int text_view_host_availablenetworks=0x7f0b001c;
+        public static final int text_view_location=0x7f0b0024;
+        public static final int text_view_meeting=0x7f0b0021;
+        public static final int text_view_meetingaccesscode=0x7f0b0028;
+        public static final int text_view_meetingname=0x7f0b0022;
+        public static final int txtv_MeetingsHead=0x7f0b0036;
+        public static final int username_view=0x7f0b0042;
+        public static final int zoomLabelTextView=0x7f0b0053;
+        public static final int zoomTextView=0x7f0b0050;
+        public static final int zoom_in=0x7f0b004c;
+        public static final int zoom_out=0x7f0b004b;
     }
     public static final class layout {
         public static final int activity_add_files=0x7f030000;
@@ -181,18 +189,18 @@ public final class R {
         public static final int scroll_layout=0x7f03001f;
     }
     public static final class menu {
-        public static final int access_code=0x7f090000;
-        public static final int add_files=0x7f090001;
-        public static final int create_meeting=0x7f090002;
-        public static final int display_image=0x7f090003;
-        public static final int display_video=0x7f090004;
-        public static final int guest_joined_network=0x7f090005;
-        public static final int host_scan_networks=0x7f090006;
-        public static final int host_start_view=0x7f090007;
-        public static final int main=0x7f090008;
-        public static final int pdf_guest_view=0x7f090009;
-        public static final int pdfhostview=0x7f09000a;
-        public static final int pptview=0x7f09000b;
+        public static final int access_code=0x7f0a0000;
+        public static final int add_files=0x7f0a0001;
+        public static final int create_meeting=0x7f0a0002;
+        public static final int display_image=0x7f0a0003;
+        public static final int display_video=0x7f0a0004;
+        public static final int guest_joined_network=0x7f0a0005;
+        public static final int host_scan_networks=0x7f0a0006;
+        public static final int host_start_view=0x7f0a0007;
+        public static final int main=0x7f0a0008;
+        public static final int pdf_guest_view=0x7f0a0009;
+        public static final int pdfhostview=0x7f0a000a;
+        public static final int pptview=0x7f0a000b;
     }
     public static final class string {
         public static final int action_forgot_password=0x7f05002d;
@@ -261,11 +269,6 @@ public final class R {
             backward-compatibility can go here.
 
         
-
-        Base application theme for API 11+. This theme completely replaces
-        AppBaseTheme from res/values/styles.xml on API 11+ devices.
-    
- API 11 theme customizations can go here. 
 
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and

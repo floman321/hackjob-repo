@@ -29,7 +29,7 @@ public class PPTViewActivity extends Activity
 	public void foward(View view) throws Exception
 	{
 			System.out.println("IN FORWARD");
-			String filePath = getIntent().getStringExtra("filePath");
+			//String filePath = getIntent().getStringExtra("filePath");
 			
 			
 			

@@ -13,11 +13,12 @@
            android:id="@+id/fileName"
            android:layout_width="fill_parent"
            android:layout_height="wrap_content"
-           android:layout_marginBottom="5dp"
-           android:layout_marginTop="5dp"
+           android:layout_marginBottom="5dip"
+           android:layout_marginTop="5dip"
            android:paddingLeft="6dip"
            android:paddingTop="6dip"
-           android:textColor="#000880"
+           android:paddingBottom="6dip"
+           android:textColor="#00B2FF"
            android:textSize="17sp"
            android:textStyle="bold" />
 

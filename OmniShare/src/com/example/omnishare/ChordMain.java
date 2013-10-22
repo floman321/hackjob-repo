@@ -11,6 +11,7 @@ import com.samsung.chord.ChordManager.INetworkListener;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.widget.Toast;
 
 public class ChordMain {
@@ -18,11 +19,11 @@ public class ChordMain {
 	protected static final String GUEST_REQUEST_PDFPAGE = "3";
 	protected static final String MESSAGE_NEW_FILE_UPLOADED = "2";
 	//For handling File-Suggest Functionality 
-	//4 Payload = fileName
-	//5 payload = boolean result + fileName
+	//4 Pay load = fileName
+	//5 pay load = boolean result + fileName
 	protected static final String MESSAGE_SUGGESTFILE = "4";
 	protected static final String MESSAGE_SUGGESTFILE_RESPONSE = "5";
-	protected static final String CHANNEL_JOINED = "BOOBCHANNEL";
+	protected static final String CHANNEL_JOINED = "OMNISHAREMESSAGECHANNEL";
 	protected ChordManager mChordManager = null;
 	protected boolean bStarted = false;
 	protected int mSelectedInterface = -1;
@@ -247,7 +248,10 @@ public class ChordMain {
         		currContext.sendBroadcast(broadcastIntent);
         		
         	} else if (Integer.parseInt(payloadType) == 2){
-        		ServerInterface.syncFiles(currContext);
+        		//ServerInterface.syncFiles(currContext);
+                //must be async
+                
+                new SyncFilesTask().execute();
         		
         	} else if (payloadType.equals(MESSAGE_SUGGESTFILE)){   //For handling File-Suggest Functionality
         		System.out.println("MESSAGE_SUGGESTFILE message received");   
@@ -268,6 +272,8 @@ public class ChordMain {
         		if(result.equals("true"))
         		{
         			ServerInterface.sendFile(new File(fileName), currContext);
+        			//TODO Still to test
+                    sendToAll("File Uploaded", 2);
         		}
         	}
         	
@@ -372,7 +378,14 @@ public class ChordMain {
         IChordChannel channel = mChordManager.getJoinedChannel(CHANNEL_JOINED);
         //add message type switch here
         String messageString = messageType + "";
-        channel.sendDataToAll(messageString, payload);
+        if(channel != null)
+        {
+            channel.sendDataToAll(messageString, payload);
+        }
+        else
+        {
+            System.out.println("CHORD CHANNEL NULL");
+        }
     }
     
   //For handling File-Suggest Functionality - Used by host to reply to node that made file suggestion
@@ -389,5 +402,39 @@ public class ChordMain {
     
     public ChordManager getChordManager(){
     	return mChordManager;
+    }
+    
+    class SyncFilesTask extends AsyncTask<String, Integer, String> 
+    {
+
+        
+        @Override
+        protected void onPreExecute() {
+           super.onPreExecute(); 
+          
+        }
+ 
+      
+        @Override
+        protected void onProgressUpdate(Integer... values) 
+        {
+           super.onProgressUpdate(values);       
+        }
+      
+        @Override
+     protected void onPostExecute(String result)
+        {
+            super.onPostExecute(result);
+            System.out.println("Done Receiving files from server");
+            
+           // finish();
+        }
+
+         @Override
+         protected String doInBackground(String... params)
+         {               
+             ServerInterface.syncFiles(currContext);             
+             return "Done with file get/sync";
+         }
     }
 }

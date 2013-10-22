@@ -68,7 +68,7 @@ public class HostScanNetworksActivity extends Activity
 		   @Override
 		   protected HashMap<String,String> doInBackground(String... params) 
 		   {
-		      String IP=params[0];
+		     // String IP=params[0];
 		      serverList = new HashMap<String,String>();
 		      if (android.os.Build.VERSION.SDK_INT > 9) 
 				{
@@ -163,7 +163,7 @@ public class HostScanNetworksActivity extends Activity
 		    	  serverNameList.add(key);
 		      }
 		     
-		      ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.activity_listnetwork_item, serverNameList);
+		      ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_listnetwork_item, serverNameList);
 		      lv.setAdapter(adapter);
 		   }
 	   }

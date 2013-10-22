@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.AlertDialog;
@@ -14,7 +13,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class AddFilesActivity extends ListActivity {
@@ -24,7 +22,7 @@ public class AddFilesActivity extends ListActivity {
     private ArrayList<String> path = null;
     private String root;
     private TextView myPath;
-    ArrayList<String> fileList = new ArrayList();
+    ArrayList<String> fileList = new ArrayList<String>();
     DBController dbController = new DBController(this);
 
     @Override

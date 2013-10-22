@@ -25,7 +25,7 @@ public class ServerFinder implements Runnable
 	public ServerFinder()
 	{
 		isDone = false;
-		mHostList = new ArrayList();
+		mHostList = new ArrayList<String>();
 		System.out.println("ServerFinder Constructor");
 	}
 	

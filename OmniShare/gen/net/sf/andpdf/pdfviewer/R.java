@@ -28,29 +28,29 @@ public final class R {
 		public static final int zoom_out = 0x7f020012;
 	}
 	public static final class id {
-		public static final int btExit = 0x7f0a0056;
-		public static final int btOK = 0x7f0a0057;
-		public static final int buttons = 0x7f0a003f;
-		public static final int cancel_button = 0x7f0a0040;
-		public static final int clockwiseRotateButton = 0x7f0a0052;
-		public static final int counterClockwiseRotateButton = 0x7f0a0051;
-		public static final int deviceIcon = 0x7f0a003b;
-		public static final int deviceName = 0x7f0a003c;
-		public static final int devicePicker = 0x7f0a0054;
-		public static final int devicePickerIcon = 0x7f0a003d;
-		public static final int etPassword = 0x7f0a0055;
-		public static final int navigation_next = 0x7f0a004f;
-		public static final int navigation_page_position_label = 0x7f0a004d;
-		public static final int navigation_previous = 0x7f0a004e;
-		public static final int no_devices = 0x7f0a003e;
-		public static final int pagenum_edit = 0x7f0a0043;
-		public static final int pdf_image = 0x7f0a0049;
-		public static final int refresh_button = 0x7f0a0041;
-		public static final int username_view = 0x7f0a0042;
-		public static final int zoomLabelTextView = 0x7f0a0053;
-		public static final int zoomTextView = 0x7f0a0050;
-		public static final int zoom_in = 0x7f0a004c;
-		public static final int zoom_out = 0x7f0a004b;
+		public static final int btExit = 0x7f0b0056;
+		public static final int btOK = 0x7f0b0057;
+		public static final int buttons = 0x7f0b003f;
+		public static final int cancel_button = 0x7f0b0040;
+		public static final int clockwiseRotateButton = 0x7f0b0052;
+		public static final int counterClockwiseRotateButton = 0x7f0b0051;
+		public static final int deviceIcon = 0x7f0b003b;
+		public static final int deviceName = 0x7f0b003c;
+		public static final int devicePicker = 0x7f0b0054;
+		public static final int devicePickerIcon = 0x7f0b003d;
+		public static final int etPassword = 0x7f0b0055;
+		public static final int navigation_next = 0x7f0b004f;
+		public static final int navigation_page_position_label = 0x7f0b004d;
+		public static final int navigation_previous = 0x7f0b004e;
+		public static final int no_devices = 0x7f0b003e;
+		public static final int pagenum_edit = 0x7f0b0043;
+		public static final int pdf_image = 0x7f0b0049;
+		public static final int refresh_button = 0x7f0b0041;
+		public static final int username_view = 0x7f0b0042;
+		public static final int zoomLabelTextView = 0x7f0b0053;
+		public static final int zoomTextView = 0x7f0b0050;
+		public static final int zoom_in = 0x7f0b004c;
+		public static final int zoom_out = 0x7f0b004b;
 	}
 	public static final class layout {
 		public static final int device_item = 0x7f030012;
