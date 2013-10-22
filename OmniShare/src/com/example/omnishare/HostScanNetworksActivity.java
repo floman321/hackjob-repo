@@ -55,9 +55,9 @@ public class HostScanNetworksActivity extends Activity
 	}
 		
 	
-	   private class FindServerTask extends AsyncTask<String, Integer, HashMap<String,String>> 
+	   private class FindServerTask extends AsyncTask<String, Integer, ArrayList<String>> 
 	   {
-			HashMap<String,String> serverList;
+			ArrayList<String> serverList;
 			
 			
 		   @Override
@@ -66,10 +66,10 @@ public class HostScanNetworksActivity extends Activity
 		   }
 		 
 		   @Override
-		   protected HashMap<String,String> doInBackground(String... params) 
+		   protected ArrayList<String> doInBackground(String... params) 
 		   {
-		     // String IP=params[0];
-		      serverList = new HashMap<String,String>();
+		      String IP=params[0];
+		      serverList = new ArrayList<String>();
 		      if (android.os.Build.VERSION.SDK_INT > 9) 
 				{
 				      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -99,9 +99,8 @@ public class HostScanNetworksActivity extends Activity
 		                if(responseString.equals("OMNISHARE_TRUE"))
 		                {
 		                	
-		                	String value = responsePacket.getAddress().getHostAddress();
-		                	String key = ServerInterface.getMeetingName(value, getApplicationContext());
-		                	serverList.put(key, value); //k = name, v = ip
+		                	String value = responsePacket.getAddress().getHostAddress();		                	
+		                	serverList.add(value); 
 		                	socket.leaveGroup(group);
 		                	socket.close();
 		                	publishProgress(100);
@@ -132,7 +131,7 @@ public class HostScanNetworksActivity extends Activity
 		   }
 		 
 		   @Override
-		protected void onPostExecute(HashMap<String,String> result)
+		protected void onPostExecute(ArrayList<String> result)
 		   {
 		      super.onPostExecute(result);
 		      System.out.println("onPostExecute");
@@ -144,8 +143,7 @@ public class HostScanNetworksActivity extends Activity
 					public void onItemClick(AdapterView<?> parent, View view,int position, long id)
 					{						
 						TextView newHost = (TextView) view.findViewById(R.id.networkhost);
-						//String hostAddress = (String) newHost.getText();
-						String hostAddress = serverList.get((String) newHost.getText());
+						String hostAddress = (String) newHost.getText();
 						System.out.println("Host " + hostAddress + " send to sharedPrefs File");
 					    SharedPreferences settings = getSharedPreferences("OmniShareHostsFile", 0);
 					    SharedPreferences.Editor editor = settings.edit();
@@ -153,17 +151,13 @@ public class HostScanNetworksActivity extends Activity
 				        editor.commit();
 				        Toast toast = Toast.makeText(getApplicationContext(), hostAddress+ " set as Host...", Toast.LENGTH_LONG);
 				    	toast.show();
+				    	finish();
 					}
 				});
 		      System.out.println("onPostExecute ServerFinder " + serverList.size());
-		      ArrayList<String> serverNameList = new ArrayList<String>();
 
-		      for(String key: serverList.keySet())
-		      {
-		    	  serverNameList.add(key);
-		      }
 		     
-		      ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_listnetwork_item, serverNameList);
+		      ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.activity_listnetwork_item, serverList);
 		      lv.setAdapter(adapter);
 		   }
 	   }

@@ -12,6 +12,7 @@ import java.util.Locale;
 import net.sf.andpdf.pdfviewer.PdfViewerActivity;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
@@ -27,14 +28,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -221,7 +225,7 @@ public class HostStartView extends FragmentActivity implements
 				System.out.println("FileList Size " + fileList.size());
 			}
 			
-			//for file list and on click functionality	
+			//for filelist and onclick functionality	
 			System.out.println("CurrentView queryID new " + queryid);
 			final ArrayList<HashMap<String, String>> meetingFileList = dbController.getAllMeetingFiles(queryid);
 			
@@ -246,14 +250,14 @@ public class HostStartView extends FragmentActivity implements
 					public void onItemClick(AdapterView<?> parent, View view,int position, long id)
 					{
 						//TextView fileName = (TextView) view.findViewById(R.id.rowtext);
-						//String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
+					//	String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
 						String queryid = getIntent().getStringExtra("meetingId");
-                        final ArrayList<HashMap<String, String>> meetingFileList = dbController.getAllMeetingFiles(queryid);
+						final ArrayList<HashMap<String, String>> meetingFileList = dbController.getAllMeetingFiles(queryid);
 						
 						String filePath = meetingFileList.get(position).get("fileLocation");
 						String tempFilePathString = filePath.toLowerCase();
 						
-						System.out.println("Host 1 CurrentView Onclick " + filePath);
+		                System.out.println("Host 1 CurrentView Onclick " + filePath);
 		                
 		                if(tempFilePathString.contains(".pdf"))
 		                {
@@ -269,9 +273,9 @@ public class HostStartView extends FragmentActivity implements
 		                }
 	                	else
 	                	{
-		                	Intent intent = new Intent(getApplicationContext(), DisplayVideoActivity.class);
-		                	intent.putExtra("filePath", filePath);
-		                	startActivity(intent);		                
+		                //	Intent intent = new Intent(getApplicationContext(), DisplayVideoActivity.class);
+		                //	intent.putExtra("filePath", filePath);
+		                //	startActivity(intent);		                
 		                }						
 					}
 				});
@@ -310,13 +314,13 @@ public class HostStartView extends FragmentActivity implements
 		 		{
 		 			ListView lv = (ListView)findViewById(R.id.lv_fragment_filelist);
 		 			
-		 			lv.setOnItemClickListener(new OnItemClickListener() 
+		 		/*	lv.setOnItemClickListener(new OnItemClickListener() 
 		 			{
 		 				@Override //FOR TEST ONLY
 						public void onItemClick(AdapterView<?> parent, View view,int position, long id)
 						{
-							//TextView fileName = (TextView) view.findViewById(R.id.fileName);
-							//String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
+							TextView fileName = (TextView) view.findViewById(R.id.fileName);
+							String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
 												
 							 //TEST by B for pdf viewer activity
 							String filePath = meetingFileList.get(position).get("fileLocation");
@@ -331,7 +335,7 @@ public class HostStartView extends FragmentActivity implements
 							
 						}
 		 			});
-		 			
+		 			*/
 		 			ListAdapter adapter = new SimpleAdapter(this, meetingFileList, R.layout.activity_fileitemrepresentation, new String[] {"fileId", "fileName" }, new int[] {R.id.fileId, R.id.fileName });
 		 			lv.setAdapter(adapter);
 		 		}

@@ -273,7 +273,7 @@ public class ChordMain {
         		{
         			ServerInterface.sendFile(new File(fileName), currContext);
         			//TODO Still to test
-                    sendToAll("File Uploaded", 2);
+				sendToAll("File Uploaded", 2);
         		}
         	}
         	

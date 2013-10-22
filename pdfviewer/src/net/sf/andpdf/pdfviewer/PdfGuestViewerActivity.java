@@ -57,8 +57,8 @@ import com.sun.pdfview.font.PDFFont;
  */
 public abstract class PdfGuestViewerActivity extends Activity {
 
-	private static final int STARTPAGE = 1;
-	private static final float STARTZOOM = 1.0f;
+	private static final int STARTPAGE = 0;
+	private static final float STARTZOOM = 1.2f;
 	
 	private static final float MIN_ZOOM = 0.25f;
 	private static final float MAX_ZOOM = 3.0f;
@@ -75,7 +75,7 @@ public abstract class PdfGuestViewerActivity extends Activity {
 	public static final boolean DEFAULTSHOWIMAGES = true;
 	public static final boolean DEFAULTANTIALIAS = true;
 	public static final boolean DEFAULTUSEFONTSUBSTITUTION = false;
-	public static final boolean DEFAULTKEEPCACHES = false;
+	public static final boolean DEFAULTKEEPCACHES = true;
     
 	private final static int MENU_NEXT_PAGE = 1;
 	private final static int MENU_PREV_PAGE = 2;
@@ -252,36 +252,39 @@ public abstract class PdfGuestViewerActivity extends Activity {
 		{	
 			return;
 		}
+		
 		if(page != 0)
-        {
-		mGraphView.showText("reading page "+ page+", zoom:"+zoom);
-		//progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page");
-        backgroundThread = new Thread(new Runnable() {
-			public void run() {
-				try {
-			        if (mPdfFile != null) {
-			    		//progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page");
-			    		
-//			        	File f = new File("/sdcard/andpdf.trace");
-//			        	f.delete();
-//			        	Log.e(TAG, "DEBUG.START");
-//			        	Debug.startMethodTracing("andpdf");
-			        	showPage(page, zoom);
-//			        	Debug.stopMethodTracing();
-//			        	Log.e(TAG, "DEBUG.STOP");
+    	{
+			mGraphView.showText("reading page "+ page+", zoom:"+zoom);
+			//progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page");
+	        backgroundThread = new Thread(new Runnable() {
+				public void run() {
+					try {
+				        if (mPdfFile != null) {
+				    		//progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page");
+				    		
+	//			        	File f = new File("/sdcard/andpdf.trace");
+	//			        	f.delete();
+	//			        	Log.e(TAG, "DEBUG.START");
+	//			        	Debug.startMethodTracing("andpdf");
 				        
-				        /*if (progress != null)
-				        	progress.dismiss();*/
-			        }
-				} catch (Exception e) {
-					Log.e(TAG, e.getMessage(), e);
+				        	showPage(page, zoom);
+				        	
+	//			        	Debug.stopMethodTracing();
+	//			        	Log.e(TAG, "DEBUG.STOP");
+					        
+					        /*if (progress != null)
+					        	progress.dismiss();*/
+				        }
+					} catch (Exception e) {
+						Log.e(TAG, e.getMessage(), e);
+					}
+			        backgroundThread = null;
 				}
-		        backgroundThread = null;
-			}
-		});
-        updateImageStatus();
-        backgroundThread.start();
-        }
+			});
+	        updateImageStatus();
+	        backgroundThread.start();
+    	}
 	}
 
 

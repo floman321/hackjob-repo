@@ -52,6 +52,8 @@ public class MeetingListItemDetail extends ListActivity
 		super.onStop();
 	
 	}
+	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -92,30 +94,7 @@ public class MeetingListItemDetail extends ListActivity
 		
 		if (meetingList.size() != 0)
 		{
-			ListView lv = getListView();
-			
-			lv.setOnItemClickListener(new OnItemClickListener() 
-			{
-				@Override ////FOR TEST ONLY
-				public void onItemClick(AdapterView<?> parent, View view,int position, long id)
-				{
-					//TextView fileName = (TextView) view.findViewById(R.id.fileName);
-					//String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
-										
-					 //TEST by B for pdf viewer activity
-					String filePath = meetingFileList.get(position).get("fileLocation");
-	                System.out.println("PDF VIEW TEST " + filePath);
-	                
-	                if(filePath.contains(".pdf"))
-	                {	          
-		                Intent pdfIntent = new Intent(getApplicationContext(), PdfhostviewActivity.class);
-		                pdfIntent.putExtra(PdfViewerActivity.EXTRA_PDFFILENAME, filePath);
-		                startActivity(pdfIntent);
-	                }
-					
-				}
-			});
-			
+			ListView lv = getListView();			
 			ListAdapter adapter = new SimpleAdapter(this, meetingFileList, R.layout.activity_fileitemrepresentation, new String[] {"fileId", "fileName" }, new int[] {R.id.fileId, R.id.fileName });
 			lv.setAdapter(adapter);
 		}
@@ -188,30 +167,7 @@ public class MeetingListItemDetail extends ListActivity
 			 		
 			    	 if (meetingFileList.size() != 0)
 			 		{
-			 			ListView lv = getListView();
-			 			
-			 	/*		lv.setOnItemClickListener(new OnItemClickListener() 
-			 			{
-			 				@Override //FOR TEST ONLY
-							public void onItemClick(AdapterView<?> parent, View view,int position, long id)
-							{
-								TextView fileName = (TextView) view.findViewById(R.id.fileName);
-								String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
-													
-								 //TEST by B for pdf viewer activity
-								String filePath = meetingFileList.get(position).get("fileLocation");
-				                System.out.println("PDF VIEW TEST " + filePath);
-				                
-				                if(filePath.contains(".pdf"))
-				                {
-					                Intent pdfIntent = new Intent(getApplicationContext(), PdfhostviewActivity.class);
-					                pdfIntent.putExtra(PdfViewerActivity.EXTRA_PDFFILENAME, filePath);
-					                startActivity(pdfIntent);
-				                }
-								
-							}
-			 			});*/
-			 			
+			 			ListView lv = getListView();			 			
 			 			ListAdapter adapter = new SimpleAdapter(this, meetingFileList, R.layout.activity_fileitemrepresentation, new String[] {"fileId", "fileName" }, new int[] {R.id.fileId, R.id.fileName });
 			 			lv.setAdapter(adapter);
 			 		}		 
