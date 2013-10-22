@@ -1,9 +1,7 @@
 package com.example.omnishare;
 
 import net.sf.andpdf.pdfviewer.PdfGuestViewerActivity;
-import net.sf.andpdf.pdfviewer.PdfViewerActivity;
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -49,9 +47,6 @@ public class PdfGuestViewActivity extends PdfGuestViewerActivity
 	{
 		// TODO Auto-generated method stub
 		super.onResume();
-		String message = "Page_Request";
-		chordmain.sendToAll(message, 3);
-		
 		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
 	}
 

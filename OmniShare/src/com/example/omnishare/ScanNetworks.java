@@ -50,7 +50,7 @@ public class ScanNetworks extends Activity{
         	wim.setWifiEnabled(true);        
         }
         myIP = Formatter.formatIpAddress(wim.getConnectionInfo().getIpAddress());
-       System.out.println("NETWORK ADDRESS FROM WIM " + myIP);       
+       System.out.println("GUEST NETWORK ADDRESS FROM WIM " + myIP);       
        
        new FindServerTask().execute(myIP);	       
 	}
@@ -152,7 +152,7 @@ public class ScanNetworks extends Activity{
 		                	
 		                	String value = responsePacket.getAddress().getHostAddress();
 		                	String key = ServerInterface.getMeetingName(value, getApplicationContext());
-		                	if(ServerInterface.isActive(value, getApplicationContext()))
+		                	if(key.length() > 0)
 		                	{
 		                		serverList.put(key, value); //k = name, v = ip
 		                	}
@@ -221,6 +221,11 @@ public class ScanNetworks extends Activity{
 		     
 		      ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.activity_listnetwork_item, serverNameList);
 		      lv.setAdapter(adapter);
+		      if(serverNameList.isEmpty())
+              {
+                Toast toast = Toast.makeText(getApplicationContext(), "No active servers found.", Toast.LENGTH_LONG);
+                toast.show();
+              }
 		   }
 	   }
 	

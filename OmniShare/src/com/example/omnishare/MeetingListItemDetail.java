@@ -2,6 +2,7 @@ package com.example.omnishare;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,24 +11,31 @@ import net.sf.andpdf.pdfviewer.PdfViewerActivity;
 import com.example.omnishare.PdfhostviewActivity;
 
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-//import android.widget.TextView;
-import android.widget.TextView;
+import android.widget.Toast;
+
 
 public class MeetingListItemDetail extends ListActivity
 {
 	private static final String LOGCAT = null;
+	String y, m, d;
 
 	DBController dbController = new DBController(this);
 	EditText meetingName;
@@ -68,6 +76,17 @@ public class MeetingListItemDetail extends ListActivity
 			meetingAccessCode.setText(meetingList.get("meetingCode"));
 		}
 
+		meetingDate.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				// TODO Auto-generated method stub
+				if(hasFocus){
+					DialogFragment newFragment = new DatePickerFragment();
+				    newFragment.show(getFragmentManager(), "datePicker");
+				}
+			}
+		});
 		
 		final ArrayList<HashMap<String, String>> meetingFileList = dbController.getAllMeetingFiles(queryid);
 		
@@ -80,8 +99,8 @@ public class MeetingListItemDetail extends ListActivity
 				@Override ////FOR TEST ONLY
 				public void onItemClick(AdapterView<?> parent, View view,int position, long id)
 				{
-					TextView fileName = (TextView) view.findViewById(R.id.fileName);
-					String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
+					//TextView fileName = (TextView) view.findViewById(R.id.fileName);
+					//String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
 										
 					 //TEST by B for pdf viewer activity
 					String filePath = meetingFileList.get(position).get("fileLocation");
@@ -131,44 +150,11 @@ public class MeetingListItemDetail extends ListActivity
 		finish();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void switchHostViewStarter(View view){
-			//ADDED TO START ASYNC FILE TRANSFER BEFORE SWITCHING ACTIVITY
-			Intent intent = getIntent();
-			String queryid = intent.getStringExtra("meetingId");
-			ArrayList<HashMap<String, String>> tempmeetingFileList = dbController.getAllMeetingFiles(queryid);
-			ArrayList<String> actualFileNames = new ArrayList<String>();
-			
-			System.out.println("tempmeetingfileList.size " + tempmeetingFileList.size() + "query ID " + queryid);
-			
-			//to add the 3 column of the db to a list of absolute file paths
-			for(int k = 0; k< tempmeetingFileList.size(); k++)
-			{
-				Collection<String> fileList = tempmeetingFileList.get(k).values();
-				Iterator<String> i = fileList.iterator();
-				int y = 0;
-				while(i.hasNext())
-				{
-					String temp = i.next();
-					if(y == 3) //3rd Attribute from the cursor.
-					{
-						actualFileNames.add(temp);
-					}
-					
-					System.out.println(y++ +  " FILE IN FILE LIST BEFORE TRANSFER " + temp);
-				}
-			}
-			//update details of session 			
-			ServerInterface.setActive(true, getApplicationContext());
-			ServerInterface.setAccessCode(meetingAccessCode.getText().toString(), getApplicationContext());
-			ServerInterface.setMeetingName(meetingName.getText().toString(), getApplicationContext());
-			
-			new SendFilesTask().execute(actualFileNames);
-			
-	 		Intent myIntent = new Intent(MeetingListItemDetail.this, HostStartView.class);
-	 		
-	 		myIntent.putExtra("meetingId", queryid);
-			//myIntent.putExtra("key", value); //Optional parameters
-	 		MeetingListItemDetail.this.startActivity(myIntent);
+		 //for setting a server first before session starts
+        Intent findNetworkIntent = new Intent(getApplicationContext(), HostScanNetworksActivity.class);
+        startActivityForResult(findNetworkIntent, 2); 
 	
 	}
 
@@ -232,8 +218,56 @@ public class MeetingListItemDetail extends ListActivity
 			     }
 			     if (resultCode == RESULT_CANCELED) {    		         
 			     }
-			  }
-			}
+			}else if( requestCode == 2)
+            {
+                  if(ServerInterface.isHostSet(getApplicationContext()))
+                  {
+                      //ADDED TO START ASYNC FILE TRANSFER BEFORE SWITCHING ACTIVITY
+                      Intent intent = getIntent();
+                      String queryid = intent.getStringExtra("meetingId");
+                      ArrayList<HashMap<String, String>> tempmeetingFileList = dbController.getAllMeetingFiles(queryid);
+                      ArrayList<String> actualFileNames = new ArrayList<String>();
+                      
+                      System.out.println("tempmeetingfileList.size " + tempmeetingFileList.size() + "query ID " + queryid);
+                      
+                      //to add the 3 column of the db to a list of absolute file paths
+                      for(int k = 0; k< tempmeetingFileList.size(); k++)
+                      {
+                          Collection<String> fileList = tempmeetingFileList.get(k).values();
+                          Iterator<String> i = fileList.iterator();
+                          int y = 0;
+                          while(i.hasNext())
+                          {
+                              String temp = i.next();
+                              if(y == 3) //3rd Attribute from the cursor.
+                              {
+                                  actualFileNames.add(temp);
+                              }
+                              
+                              System.out.println(y++ +  " FILE IN FILE LIST BEFORE TRANSFER " + temp);
+                          }
+                      }
+                      //update details of session             
+                      ServerInterface.setActive(true, getApplicationContext());
+                      ServerInterface.setAccessCode(meetingAccessCode.getText().toString(), getApplicationContext());
+                      ServerInterface.setMeetingName(meetingName.getText().toString(), getApplicationContext());
+                      
+                      new SendFilesTask().execute(actualFileNames);
+                      
+                      Intent myIntent = new Intent(MeetingListItemDetail.this, HostStartView.class);
+                      
+                      myIntent.putExtra("meetingId", queryid);
+                      //myIntent.putExtra("key", value); //Optional parameters
+                      MeetingListItemDetail.this.startActivity(myIntent);
+                  }
+                  else
+                  {
+                      Toast toast = Toast.makeText(getApplicationContext(), "No Server Set.", Toast.LENGTH_LONG);
+                      toast.show();
+                  }
+            }
+          
+          }
 
 	 private class SendFilesTask extends AsyncTask<ArrayList<String>, Integer, String> {
 
@@ -278,4 +312,28 @@ public class MeetingListItemDetail extends ListActivity
 	            return "Done sending " + inputs[0].size() +" files to server";
 	        }
 	    }
+	 
+	 
+		@SuppressLint("ValidFragment")
+		private class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+		    @Override
+		    public Dialog onCreateDialog(Bundle savedInstanceState) {
+		        // Use the current date as the default date in the picker
+		        final Calendar c = Calendar.getInstance();
+		        int year = c.get(Calendar.YEAR);
+		        int month = c.get(Calendar.MONTH);
+		        int day = c.get(Calendar.DAY_OF_MONTH);
+
+		        // Create a new instance of DatePickerDialog and return it
+		        return new DatePickerDialog(getActivity(), this, year, month, day);
+		    }
+
+		    public void onDateSet(DatePicker view, int year, int month, int day) {
+		    	y = Integer.toString(year);
+		        m = (month+1 < 10 ? ("0" + Integer.toString(month+1)) : Integer.toString(month+1));
+		        d = (day < 10 ? ("0" + Integer.toString(day)) : Integer.toString(day));
+		        meetingDate.setText(d + "-" + m + "-" + y);
+		    }
+		}
 }

@@ -1,7 +1,6 @@
 package com.example.omnishare;
 
 import net.sf.andpdf.pdfviewer.AllShareService;
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.app.Activity;
 import android.graphics.Bitmap;

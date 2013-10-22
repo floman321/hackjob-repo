@@ -252,7 +252,8 @@ public abstract class PdfGuestViewerActivity extends Activity {
 		{	
 			return;
 		}
-		
+		if(page != 0)
+        {
 		mGraphView.showText("reading page "+ page+", zoom:"+zoom);
 		//progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page");
         backgroundThread = new Thread(new Runnable() {
@@ -280,6 +281,7 @@ public abstract class PdfGuestViewerActivity extends Activity {
 		});
         updateImageStatus();
         backgroundThread.start();
+        }
 	}
 
 

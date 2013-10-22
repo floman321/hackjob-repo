@@ -4,7 +4,7 @@
     <string name="app_name">OmniShare</string>
     <string name="action_settings">Settings</string>
     <string name="str_mymeetings">My Meetings</string>
-    <string name="str_scanavailablenetw">Scan Available Networks</string>
+    <string name="str_scanavailablenetw">Scan For Meetings</string>
     <string name="str_configuration">Configuration</string>
     <string name="str_create_new_meeting">Create New Meeting</string>
     <string name="str_remove_meeting">Remove Meeting</string>
@@ -15,8 +15,8 @@
     <string name="str_access_code">Access Code</string>
     <string name="str_curr_attached_files">Currently Attached Files</string>
     <string name="str_addremove_files">Add / Remove File</string>
-    <string name="str_available_networks">Available Networks</string>
-    <string name="str_join_network">Join Network</string>
+    <string name="str_available_networks">Available Meetings</string>
+    <string name="str_join_network">Join Meeting</string>
     <string name="title_activity_guest_joined_network">GuestJoinedNetwork</string>
     <string name="str_currentview">Current View</string>
     <string name="str_filelist">File List</string>
@@ -34,6 +34,6 @@
     <string name="title_activity_display_video">DisplayVideoActivity</string>
     <string name="title_activity_pptview">PPTViewActivity</string>
     <string name="title_activity_pdf_guest_view">PdfGuestViewActivity</string>
-    <string name="title_activity_host_scan_networks">HostScanNetworksActivity</string>
+    <string name="title_activity_host_scan_networks">HostScanMeetingsActivity</string>
 
 </resources>
