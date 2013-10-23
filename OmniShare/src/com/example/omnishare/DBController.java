@@ -223,11 +223,11 @@ public class DBController extends SQLiteOpenHelper
 		// { word });
 	}
 
-	public void deleteMeetingFile(String id)
+	public void deleteMeetingFile(String id, String fileName)
 	{
 		Log.d(LOGCAT, "deleted meetingfile " + id);
 		SQLiteDatabase database = this.getWritableDatabase();
-		String deleteQuery = "DELETE FROM meetingfiles where fileId='" + id + "'";
+		String deleteQuery = "DELETE FROM meetingfiles where fileMeetingRef='" + id + "'" + " AND fileLocation='" + fileName + "'";
 		Log.d("query", deleteQuery);
 		database.execSQL(deleteQuery);
 	}
