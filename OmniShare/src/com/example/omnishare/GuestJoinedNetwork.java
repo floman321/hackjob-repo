@@ -6,11 +6,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+
 import net.sf.andpdf.pdfviewer.PdfViewerActivity;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
@@ -47,8 +52,39 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
 
-	ChordMain chordmain;
+	public ChordMain chordmain;
+	MessageReceiver broadcastReceiver;
+		
+		private class MessageReceiver extends BroadcastReceiver 
+		{		
+			@Override
+			   public void onReceive(Context context, Intent intent) 
+			   {    
+						
+					int fileId = intent.getIntExtra("fileId", 0);		
+					System.out.println("BroadcastReceiver on receive fileId" + fileId );	
+					openGuestFile(fileId);
+			   }
+		}
 	
+
+		@Override
+		protected void onResume()
+		{
+			// TODO Auto-generated method stub
+			super.onResume();	
+			chordmain.startChord();
+			registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.OPENGUESTACT_MESSAGE"));
+		}
+		
+		@Override
+		protected void onPause()
+		{
+			// TODO Auto-generated method stub
+			super.onPause();
+			unregisterReceiver(broadcastReceiver);
+		}
+		
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
@@ -100,7 +136,11 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		
 		chordmain = new ChordMain(this.getApplicationContext());
 		chordmain.startChord();
-		ServerInterface.syncFiles(getApplicationContext());
+		
+		broadcastReceiver = new MessageReceiver();		
+		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.OPENGUESTACT_MESSAGE"));	
+		
+		new SyncFilesTask().execute();
 		
 	}
 	
@@ -136,6 +176,8 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 
+	
+	
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
@@ -153,8 +195,7 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 				System.out.println("FileList Size " + fileList.size());
 			}
 			
-			//for filelist and onclick functionality						
-			
+			//for filelist and onclick functionality	
 			if (fileList != null && fileList.size() != 0)
 			{
 				ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mViewPager.getChildAt(tab.getPosition()).getContext(),R.layout.activity_fileitem, fileList);
@@ -183,22 +224,12 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		                }else
 	                	if(tempFilePathString.contains(".jpg") || tempFilePathString.contains(".jpeg") || tempFilePathString.contains(".bmp") || tempFilePathString.contains(".png"))
 		                {
-		                	Intent intent = new Intent(getApplicationContext(), DisplayImageActivity.class);
+		                	Intent intent = new Intent(getApplicationContext(), GuestDisplayImageActivity.class);
 		                	intent.putExtra("filePath", filePath);
 		                	startActivity(intent);		                
 		                }
 	                	else
-	                	if(tempFilePathString.contains(".ppt"))
-		                {
-		                	Intent intent = new Intent(getApplicationContext(), PPTViewActivity.class);
-		                	intent.putExtra("filePath", filePath);
-		                	startActivity(intent);		                
-		                }
-	                	else
-	                	{
-		                	Intent intent = new Intent(getApplicationContext(), DisplayVideoActivity.class);
-		                	intent.putExtra("filePath", filePath);
-		                	startActivity(intent);		                
+	                	{		                
 		                }						
 					}
 				});
@@ -245,6 +276,7 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 				case 1:
 				{
 					Fragment fragment = new FileListFragment();
+					((FileListFragment)fragment).setChord(chordmain);
 					Bundle args = new Bundle();
 					args.putInt(FileListFragment.ARG_SECTION_NUMBER, position + 1);
 					fragment.setArguments(args);
@@ -265,10 +297,8 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
 					fragment.setArguments(args);
 					return fragment;
-				}
-			
-			}
-			
+				}			
+			}			
 		}
 
 		@Override
@@ -306,7 +336,6 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		public DummySectionFragment() {
 		}
 		
-		
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -316,13 +345,40 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 					.findViewById(R.id.section_label);
 			dummyTextView.setText(Integer.toString(getArguments().getInt(
 					ARG_SECTION_NUMBER)));
-			
-		
-			 
 			return rootView;
 		}
 	}
 	
+	
+	
+	private void openGuestFile(int id)
+	{
+		final ArrayList<String> fileList = ServerInterface.getCurrentFileList(getApplicationContext());	
+		File directory = Environment.getExternalStorageDirectory();
+		
+		String filePath = directory.getAbsolutePath() + "/" + fileList.get(id);
+		String tempFilePathString = filePath.toLowerCase();
+		
+		System.out.println("2 CurrentView Onclick " + filePath);
+        
+        if(tempFilePathString.contains(".pdf"))
+        {
+        	Intent pdfIntent = new Intent(getApplicationContext(), PdfGuestViewActivity.class);
+            pdfIntent.putExtra(PdfGuestViewActivity.EXTRA_PDFFILENAME, filePath);	
+            startActivity(pdfIntent);		                
+        }else
+    	if(tempFilePathString.contains(".jpg") || tempFilePathString.contains(".jpeg") || tempFilePathString.contains(".bmp") || tempFilePathString.contains(".png"))
+        {
+        	Intent intent = new Intent(getApplicationContext(), GuestDisplayImageActivity.class);
+        	intent.putExtra("filePath", filePath);
+        	startActivity(intent);		                
+        }
+    	else	           
+    	{
+        		                
+        }					
+		
+	}
 	
 	public static class FileListFragment extends Fragment
 	{
@@ -330,11 +386,32 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
-		public static final String ARG_SECTION_NUMBER = "section_number";
+		public static final String ARG_SECTION_NUMBER = "section_number";		
+		
 
+		ChordMain myChord;
+		
 		public FileListFragment()
 		{
 		}
+		
+		public void setChord(ChordMain cm)
+		{
+			myChord = cm;
+		}
+		
+		@Override
+		public void onResume()
+		{
+			// TODO Auto-generated method stub
+			super.onResume();
+			
+			if(myChord != null)
+			{
+				myChord.startChord();
+			}
+		}
+		
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
@@ -344,24 +421,18 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 			dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
 			
 			final ArrayList<String> fileList = ServerInterface.getCurrentFileList(getActivity());
-			
 
 			if (fileList != null && fileList.size() != 0)
 			{
 				ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(FileListFragment.this.getActivity(),R.layout.activity_fileitem, fileList);
-				ListView lv = (ListView) rootView.findViewById(R.id.lv_fragment_filelist);
-				
+				ListView lv = (ListView) rootView.findViewById(R.id.lv_fragment_filelist);						
 				lv.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,int position, long id)
-					{
-						TextView fileName = (TextView) view.findViewById(R.id.rowtext);
-						String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
-						
+					{											
 						File directory = Environment.getExternalStorageDirectory();
-						
-						
+												
 						String filePath = directory.getAbsolutePath() + "/" + fileList.get(position);
 						String tempFilePathString = filePath.toLowerCase();
 						
@@ -375,28 +446,20 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		                }else
 	                	if(tempFilePathString.contains(".jpg") || tempFilePathString.contains(".jpeg") || tempFilePathString.contains(".bmp") || tempFilePathString.contains(".png"))
 		                {
-		                	Intent intent = new Intent(getActivity(), DisplayImageActivity.class);
+		                	Intent intent = new Intent(getActivity(), GuestDisplayImageActivity.class);
 		                	intent.putExtra("filePath", filePath);
 		                	startActivity(intent);		                
 		                }
-	                	else
-	                	if(tempFilePathString.contains(".ppt"))
-		                {
-		                	Intent intent = new Intent(getActivity(), PPTViewActivity.class);
-		                	intent.putExtra("filePath", filePath);
-		                	startActivity(intent);		                
-		                }
-	                	else
+	                	else	           
 	                	{
-		                	Intent intent = new Intent(getActivity(), DisplayVideoActivity.class);
-		                	intent.putExtra("filePath", filePath);
-		                	startActivity(intent);		                
+		                		                
 		                }						
 					}
 				});
 				
 				lv.setAdapter(arrayAdapter);
 			}
+		
 			return rootView;
 		}
 		
@@ -404,7 +467,7 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 	}
 	
 	public void suggestFile(View v)
-	{
+	{				
 		System.out.println("SuggestFile Clicked");
 		Intent intent = new Intent(getBaseContext(), AddFilesActivity.class);
 		String falseMeetingId = "-1";
@@ -452,17 +515,14 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		new SyncFilesTask().execute();			
 	}
 	
-	
 	 private class SyncFilesTask extends AsyncTask<String, Integer, String> 
-	   {
-
-		   Toast toast = Toast.makeText(getApplicationContext(), "Syncing files, please wait", Toast.LENGTH_LONG);
+	   {		  
 		   @Override
 		   protected void onPreExecute() {
 		      super.onPreExecute();	
+		      Toast toast = Toast.makeText(getApplicationContext(), "Syncing files, please wait", Toast.LENGTH_LONG);
 		      toast.show();
-		   }
-	
+		   }	
 		 
 		   @Override
 		   protected void onProgressUpdate(Integer... values) 
@@ -471,12 +531,12 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		   }
 		 
 		   @Override
-		protected void onPostExecute(String result)
+		   protected void onPostExecute(String result)
 		   {
 			   super.onPostExecute(result);
 			   System.out.println("Done Receiving files from server");
-			   toast.cancel();
-			  // finish();
+			   Toast toast = Toast.makeText(getApplicationContext(), "Syncing Done..", Toast.LENGTH_LONG);
+			   toast.show();
 		   }
 
 			@Override
@@ -485,9 +545,5 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 				ServerInterface.syncFiles(getApplicationContext());				
 				return "Done with file get/sync";
 			}
-	   }
-	 
-
-	
-	
+	   }	
 }

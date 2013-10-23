@@ -305,7 +305,10 @@ public class AllShareService {
     
     public void pauseVideo()
     {
-		mVideoPlayer.pause();    	
+    	if(mVideoPlayer != null)
+    	{
+    		mVideoPlayer.pause(); 
+    	}
     }
     
     

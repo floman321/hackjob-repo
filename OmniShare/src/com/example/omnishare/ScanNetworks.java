@@ -25,6 +25,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -114,6 +115,8 @@ public class ScanNetworks extends Activity{
 		   @Override
 		   protected void onPreExecute() {
 		      super.onPreExecute();
+		      Button refreshBtn = (Button) findViewById(R.id.btn_guest_refresh);
+		      refreshBtn.setEnabled(false);
 		   }
 		 
 		   @Override
@@ -156,8 +159,6 @@ public class ScanNetworks extends Activity{
 		                	{
 		                		serverList.put(key, value); //k = name, v = ip
 		                	}
-		                	//serverList.add(responsePacket.getAddress().getHostAddress());
-		                	//serverNameList.add(ServerInterface.getMeetingName(responsePacket.getAddress().getHostAddress(), getApplicationContext()));
 		                	socket.leaveGroup(group);
 		                	socket.close();
 		                	publishProgress(100);
@@ -226,6 +227,9 @@ public class ScanNetworks extends Activity{
                 Toast toast = Toast.makeText(getApplicationContext(), "No active servers found.", Toast.LENGTH_LONG);
                 toast.show();
               }
+		      
+		      Button refreshBtn = (Button) findViewById(R.id.btn_guest_refresh);
+		      refreshBtn.setEnabled(true);
 		   }
 	   }
 	

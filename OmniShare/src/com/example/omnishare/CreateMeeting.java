@@ -9,18 +9,23 @@ import java.util.HashMap;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class CreateMeeting extends Activity
 {
@@ -31,6 +36,7 @@ public class CreateMeeting extends Activity
 	EditText meetingLocation;
 	EditText meetingDate;
 	EditText meetingCode;
+	int selectedFile = -999;
 	
 	DBController dbController = new DBController(this);
 	
@@ -66,6 +72,15 @@ public class CreateMeeting extends Activity
 			}
 		});
 		
+		final ListView lv_file = (ListView)findViewById(R.id.lv_createmeetingfilelist);
+		lv_file.setOnItemClickListener(new OnItemClickListener() {
+		      public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
+		        //String selectedFromList =(String) (lv_file.getItemAtPosition(myItemInt));
+		    	  selectedFile = myItemInt;
+		    	  
+		      }                 
+		});
+		
 		meetingCode = (EditText) findViewById(R.id.edit_text_createmeetingaccesscode);	
 	}
 
@@ -77,6 +92,10 @@ public class CreateMeeting extends Activity
 		return true;
 	}
 	
+	//@Override
+	//protected void onDestroy(){
+	//	dbController.close();
+	//}
 	
 	public void createNewMeeting(View view)
 	{
@@ -138,8 +157,49 @@ public class CreateMeeting extends Activity
 	
 	public void addFiles(View view)
 	{			
-		Intent intent = new Intent(this, AddFilesActivity.class);		
-		startActivityForResult(intent, 1); 
+		if(selectedFile != -999){
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CreateMeeting.this);	 
+			// set title
+			alertDialogBuilder.setTitle("Please Verify File Delete");
+			final TextView fileNameTextView = new TextView(getApplicationContext());			
+			
+			
+			final String fileName = fileList.get(selectedFile);
+					
+			
+			fileNameTextView.setText(fileName);
+			
+			// set dialog message
+			alertDialogBuilder.setView(fileNameTextView);			
+			alertDialogBuilder								
+				.setCancelable(false)
+				.setPositiveButton("Confirm",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int id)
+					{
+						fileList.remove(selectedFile);
+						ListView lv = (ListView)findViewById(R.id.lv_createmeetingfilelist);
+			    		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_listnetwork_item, fileList);
+					    lv.setAdapter(adapter);
+					}
+				  }).setNegativeButton("Deny",new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,int id)
+						{
+							ListView lv = (ListView)findViewById(R.id.lv_createmeetingfilelist);
+							lv.clearChoices();
+							lv.setSelected(false);
+							lv.clearFocus();
+							lv.requestLayout();
+							selectedFile = -999;
+						}
+					  });
+		
+		AlertDialog alert = alertDialogBuilder.create();
+		alert.show();
+		
+		} else {
+			Intent intent = new Intent(this, AddFilesActivity.class);		
+			startActivityForResult(intent, 1); 
+		}
 		
 	}	
 	

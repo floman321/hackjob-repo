@@ -46,9 +46,6 @@ public class DBController extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase database)
 	{
-		//String query;
-		//query = "CREATE TABLE meeting ( meetingId INTEGER PRIMARY KEY, meetingName TEXT, meetingLocation TEXT, meetingDate TEXT, meetingCode TEXT)";
-		
 		/*
 		 * Execute table creations 
 		 */
@@ -63,8 +60,6 @@ public class DBController extends SQLiteOpenHelper
 	public void onUpgrade(SQLiteDatabase database, int version_old,
 			int current_version)
 	{
-		//String query;
-		//query = "DROP TABLE IF EXISTS meeting";
 		database.execSQL(DROP_MEETING_TABLE);
 		database.execSQL(DROP_FILES_TABLE);
 		onCreate(database);
@@ -98,12 +93,6 @@ public class DBController extends SQLiteOpenHelper
 
 		database.update("meeting", values, "meetingId" + " = ?", new String[] { queryValues.get("meetingId") });
 		database.close();
-		// String updateQuery =
-		// "Update  words set txtWord='"+word+"' where txtWord='"+ oldWord +"'";
-		// Log.d(LOGCAT,updateQuery);
-		// database.rawQuery(updateQuery, null);
-		// return database.update("words", values, "txtWord  = ?", new String[]
-		// { word });
 	}
 
 	public void deleteMeeting(String id)
@@ -175,13 +164,11 @@ public class DBController extends SQLiteOpenHelper
 		{
 			do
 			{
-			//	HashMap<String, String> map = new HashMap<String, String>();
 				wordList.put("meetingId", cursor.getString(0));
 				wordList.put("meetingName", cursor.getString(1));
 				wordList.put("meetingLocation", cursor.getString(2));
 				wordList.put("meetingDate", cursor.getString(3));
 				wordList.put("meetingCode", cursor.getString(4));
-				//wordList.add(map);
 			}
 			while (cursor.moveToNext());
 		}
@@ -192,7 +179,6 @@ public class DBController extends SQLiteOpenHelper
 	 * Create / Read / Update / Delete methods for MEETING_FILES TABLE
 	 */
 	
-	//fileId, fileName, fileLocation, fileMeetingRef
 	public void insertMeetingFile(HashMap<String, String> queryValues)
 	{
 		SQLiteDatabase database = this.getWritableDatabase();// db created here
@@ -215,19 +201,13 @@ public class DBController extends SQLiteOpenHelper
 
 		database.update("meetingfiles", values, "fileId" + " = ?", new String[] { queryValues.get("fileId") });
 		database.close();
-		// String updateQuery =
-		// "Update  words set txtWord='"+word+"' where txtWord='"+ oldWord +"'";
-		// Log.d(LOGCAT,updateQuery);
-		// database.rawQuery(updateQuery, null);
-		// return database.update("words", values, "txtWord  = ?", new String[]
-		// { word });
 	}
 
-	public void deleteMeetingFile(String id)
+	public void deleteMeetingFile(String id, String fileName)
 	{
 		Log.d(LOGCAT, "deleted meetingfile " + id);
 		SQLiteDatabase database = this.getWritableDatabase();
-		String deleteQuery = "DELETE FROM meetingfiles where fileId='" + id + "'";
+		String deleteQuery = "DELETE FROM meetingfiles where fileMeetingRef='" + id + "'" + " AND fileLocation='" + fileName + "'";
 		Log.d("query", deleteQuery);
 		database.execSQL(deleteQuery);
 	}
@@ -236,8 +216,7 @@ public class DBController extends SQLiteOpenHelper
 	public ArrayList<HashMap<String, String>> getAllMeetingFiles(String queryVal)
 	{
 		ArrayList<HashMap<String, String>> wordList;
-		wordList = new ArrayList<HashMap<String, String>>();
-	//	String selectQuery = "SELECT  * FROM meetingfiles"; //updated this to return data associated with a specific meeting
+		wordList = new ArrayList<HashMap<String, String>>();	
 		String selectQuery = "SELECT  * FROM meetingfiles WHERE fileMeetingRef = " + queryVal;
 		SQLiteDatabase database = this.getWritableDatabase();
 		Cursor cursor = database.rawQuery(selectQuery, null);
@@ -271,12 +250,10 @@ public class DBController extends SQLiteOpenHelper
 		{
 			do
 			{
-			//	HashMap<String, String> map = new HashMap<String, String>();
 				wordList.put("fileId", cursor.getString(0));
 				wordList.put("fileName", cursor.getString(1));
 				wordList.put("fileLocation", cursor.getString(2));
 				wordList.put("fileMeetingRef", cursor.getString(3));
-				//wordList.add(map);
 			}
 			while (cursor.moveToNext());
 		}

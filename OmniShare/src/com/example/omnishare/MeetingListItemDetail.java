@@ -12,10 +12,12 @@ import com.example.omnishare.PdfhostviewActivity;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,11 +26,13 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -42,17 +46,15 @@ public class MeetingListItemDetail extends ListActivity
 	EditText meetingLocation;
 	EditText meetingDate;
 	EditText meetingAccessCode;
+	int selectedFile = -999;
 	
 	ArrayList<String> fileList = new ArrayList<String>();
 		
 	@Override
 	protected void onStop()
 	{
-		// TODO Auto-generated method stub
-		super.onStop();
-	
+		super.onStop();	
 	}
-	
 
 
 	@Override
@@ -88,6 +90,15 @@ public class MeetingListItemDetail extends ListActivity
 				    newFragment.show(getFragmentManager(), "datePicker");
 				}
 			}
+		});
+		
+		final ListView lv_file = getListView();
+		lv_file.setOnItemClickListener(new OnItemClickListener() {
+		      public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
+		        //String selectedFromList =(String) (lv_file.getItemAtPosition(myItemInt));
+		    	  selectedFile = myItemInt;
+		    	  
+		      }                 
 		});
 		
 		final ArrayList<HashMap<String, String>> meetingFileList = dbController.getAllMeetingFiles(queryid);
@@ -145,11 +156,59 @@ public class MeetingListItemDetail extends ListActivity
 
 	public void addFiles(View view)
 	{
-		Intent intent = getIntent();
-		String queryid = intent.getStringExtra("meetingId");
-		Intent resultIntent = new Intent(getApplicationContext(), AddFilesActivity.class);
-		resultIntent.putExtra("meetingId", queryid);
-		startActivityForResult(resultIntent, 1); 
+		if(selectedFile != -999){
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MeetingListItemDetail.this);	 
+			// set title
+			alertDialogBuilder.setTitle("Please Verify File Delete");
+			final TextView fileNameTextView = new TextView(getApplicationContext());			
+			
+			Intent intent = getIntent();
+			String queryid = intent.getStringExtra("meetingId");
+			final ArrayList<HashMap<String, String>> meetingFileList = dbController.getAllMeetingFiles(queryid);
+			final String fileName = meetingFileList.get(selectedFile).get("fileLocation");
+					
+			
+			fileNameTextView.setText(fileName);
+			
+			// set dialog message
+			alertDialogBuilder.setView(fileNameTextView);			
+			alertDialogBuilder								
+				.setCancelable(false)
+				.setPositiveButton("Confirm",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int id)
+					{
+						
+						Intent intent = getIntent();
+						String queryid = intent.getStringExtra("meetingId");
+						dbController.deleteMeetingFile(queryid,fileName);
+						final ArrayList<HashMap<String, String>> meetingFileList = dbController.getAllMeetingFiles(queryid);
+						ListView lv = getListView();			 			
+			 			ListAdapter adapter = new SimpleAdapter(getApplicationContext(), meetingFileList, R.layout.activity_fileitemrepresentation, new String[] {"fileId", "fileName" }, new int[] {R.id.fileId, R.id.fileName });
+			 			lv.setAdapter(adapter);
+					}
+				  }).setNegativeButton("Deny",new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,int id)
+						{
+							ListView lv = getListView();
+							lv.clearChoices();
+							lv.setSelected(false);
+							lv.clearFocus();
+							lv.requestLayout();
+							selectedFile = -999;
+						}
+					  });
+		
+		AlertDialog alert = alertDialogBuilder.create();
+		alert.show();
+		
+		} else {
+			Intent intent = getIntent();
+			String queryid = intent.getStringExtra("meetingId");
+			Intent resultIntent = new Intent(getApplicationContext(), AddFilesActivity.class);
+			resultIntent.putExtra("meetingId", queryid);
+			startActivityForResult(resultIntent, 1); 
+		}
+		
 
 	}
 	
@@ -178,7 +237,6 @@ public class MeetingListItemDetail extends ListActivity
             {
                   if(ServerInterface.isHostSet(getApplicationContext()))
                   {
-                      //ADDED TO START ASYNC FILE TRANSFER BEFORE SWITCHING ACTIVITY
                       Intent intent = getIntent();
                       String queryid = intent.getStringExtra("meetingId");
                       ArrayList<HashMap<String, String>> tempmeetingFileList = dbController.getAllMeetingFiles(queryid);
@@ -213,7 +271,6 @@ public class MeetingListItemDetail extends ListActivity
                       Intent myIntent = new Intent(MeetingListItemDetail.this, HostStartView.class);
                       
                       myIntent.putExtra("meetingId", queryid);
-                      //myIntent.putExtra("key", value); //Optional parameters
                       MeetingListItemDetail.this.startActivity(myIntent);
                   }
                   else
@@ -231,24 +288,18 @@ public class MeetingListItemDetail extends ListActivity
 	        protected void onPreExecute() {
 	            super.onPreExecute();
 	            System.out.println("onPreExecute() SendFilesTask");
-
 	        }
 
 	        @Override
 	        protected void onProgressUpdate(Integer... values) {
 	            super.onProgressUpdate(values);
 	            System.out.println("Progress at " + values[0]);
-
-	       //     ProgressBar pb = (ProgressBar) findViewById(R.id.progressBarAddFiles);
-	     //       pb.setProgress(values[0]);
 	        }
 
 	        @Override
 			protected void onPostExecute(String result) {
 	            super.onPostExecute(result);
 	            System.out.println("Done sending files to server");
-	      //      Intent intent = getIntent();
-	    //        intent.putStringArrayListExtra("fileList", fileList);
 	            finish();
 	        }
 

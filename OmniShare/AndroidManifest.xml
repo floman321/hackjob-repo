@@ -104,6 +104,10 @@
             android:name="com.example.omnishare.HostScanNetworksActivity"
             android:label="@string/title_activity_host_scan_networks" >
         </activity>
+        <activity
+            android:name="com.example.omnishare.GuestDisplayImageActivity"
+            android:label="@string/title_activity_guest_display_image" >
+        </activity>
     </application>
 
 </manifest>

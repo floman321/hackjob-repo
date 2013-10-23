@@ -7,8 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+import com.example.omnishare.GuestJoinedNetwork.FileListFragment;
 
 
+
+import net.sf.andpdf.pdfviewer.AllShareService;
 import net.sf.andpdf.pdfviewer.PdfViewerActivity;
 
 import android.app.ActionBar;
@@ -47,7 +50,6 @@ import android.widget.Toast;
 
 public class HostStartView extends FragmentActivity implements
 		ActionBar.TabListener {
-
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -64,7 +66,8 @@ public class HostStartView extends FragmentActivity implements
 	ViewPager mViewPager;
 	ChordMain chordmain;
 	MessageReceiver broadcastReceiver;
-		
+	static String displayDeviceName;
+	
 	//For handling File-Suggest Functionality - Gives host the opportunity to accept/decline a file
 		private class MessageReceiver extends BroadcastReceiver 
 		{		
@@ -92,6 +95,24 @@ public class HostStartView extends FragmentActivity implements
 							public void onClick(DialogInterface dialog,int id)
 							{
 								chordmain.sendTo(toNode, "true " + fileName, 5);
+								
+								//ADD Suggested file to device db.
+								Intent intent = getIntent();
+					            String queryid = intent.getStringExtra("meetingId");
+					            String[] filePath = fileName.split("/");
+					            String fileNameOnly = filePath[filePath.length-1];					            
+					            
+					            if(queryid != null)
+					            {
+					            		String fileLocation = fileName;
+						            	HashMap<String, String> queryValues = new HashMap<String, String>();
+							            queryValues.put("fileName", fileNameOnly);
+							            queryValues.put("fileLocation", fileLocation);
+							            queryValues.put("fileMeetingRef", queryid.toString());
+							            dbController.insertMeetingFile(queryValues);	 
+							         //   fileListfragment.getView().invalidate();
+					            }
+								
 							}
 						  }).setNegativeButton("Don't Allow",new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,int id)
@@ -112,6 +133,7 @@ public class HostStartView extends FragmentActivity implements
 		{
 			// TODO Auto-generated method stub
 			super.onResume();
+			chordmain.startChord();
 			registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
 		}
 		
@@ -127,7 +149,7 @@ public class HostStartView extends FragmentActivity implements
 		protected void onDestroy()
 		{
 			// TODO Auto-generated method stub
-			super.onDestroy();
+			super.onDestroy();			
 			chordmain.stopChord();
 		}
 
@@ -178,6 +200,15 @@ public class HostStartView extends FragmentActivity implements
 		chordmain.startChord();
 		broadcastReceiver = new MessageReceiver();		
 		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
+		
+		AllShareService mAllshare = new AllShareService(getApplicationContext());
+		mAllshare.start("");
+		displayDeviceName = "No Display Device Currently Connected";
+		if(mAllshare.getImageViewer() != null)
+		{
+			displayDeviceName = mAllshare.getImageViewer().getName();
+		}
+		mAllshare.stop();
 	}
 
 	@Override
@@ -259,6 +290,9 @@ public class HostStartView extends FragmentActivity implements
 						
 		                System.out.println("Host 1 CurrentView Onclick " + filePath);
 		                
+		                String pos = position + "";
+		                chordmain.sendToAll(pos, 6);
+		                
 		                if(tempFilePathString.contains(".pdf"))
 		                {
 		                	Intent pdfIntent = new Intent(getApplicationContext(), PdfhostviewActivity.class);
@@ -271,11 +305,12 @@ public class HostStartView extends FragmentActivity implements
 		                	intent.putExtra("filePath", filePath);
 		                	startActivity(intent);		                
 		                }
-	                	else
+	                	else if(tempFilePathString.contains(".mpg") || tempFilePathString.contains(".wmv") || tempFilePathString.contains(".mpeg") || tempFilePathString.contains(".avi") || tempFilePathString.contains(".mp3"))
+		                
 	                	{
-		                //	Intent intent = new Intent(getApplicationContext(), DisplayVideoActivity.class);
-		                //	intent.putExtra("filePath", filePath);
-		                //	startActivity(intent);		                
+		                	Intent intent = new Intent(getApplicationContext(), DisplayVideoActivity.class);
+		                	intent.putExtra("filePath", filePath);
+		                	startActivity(intent);		                
 		                }						
 					}
 				});
@@ -313,29 +348,6 @@ public class HostStartView extends FragmentActivity implements
 		    	 if (meetingFileList.size() != 0)
 		 		{
 		 			ListView lv = (ListView)findViewById(R.id.lv_fragment_filelist);
-		 			
-		 		/*	lv.setOnItemClickListener(new OnItemClickListener() 
-		 			{
-		 				@Override //FOR TEST ONLY
-						public void onItemClick(AdapterView<?> parent, View view,int position, long id)
-						{
-							TextView fileName = (TextView) view.findViewById(R.id.fileName);
-							String valmeetingId = (fileName.getText() != null ? fileName.getText().toString() : "");
-												
-							 //TEST by B for pdf viewer activity
-							String filePath = meetingFileList.get(position).get("fileLocation");
-			                System.out.println("PDF VIEW TEST " + filePath);
-			                
-			                if(filePath.contains(".pdf"))
-			                {
-				                Intent pdfIntent = new Intent(getApplicationContext(), PdfhostviewActivity.class);
-				                pdfIntent.putExtra(PdfViewerActivity.EXTRA_PDFFILENAME, filePath);
-				                startActivity(pdfIntent);
-			                }
-							
-						}
-		 			});
-		 			*/
 		 			ListAdapter adapter = new SimpleAdapter(this, meetingFileList, R.layout.activity_fileitemrepresentation, new String[] {"fileId", "fileName" }, new int[] {R.id.fileId, R.id.fileName });
 		 			lv.setAdapter(adapter);
 		 		}
@@ -374,7 +386,8 @@ public class HostStartView extends FragmentActivity implements
 	        protected void onPreExecute() {
 	            super.onPreExecute();
 	            System.out.println("onPreExecute() SendFilesTask");
-
+	            Toast toast = Toast.makeText(getApplicationContext(), "Syncing Files, Please wait..", Toast.LENGTH_LONG);
+				   toast.show();
 	        }
 
 	        @Override
@@ -393,6 +406,8 @@ public class HostStartView extends FragmentActivity implements
 	      //      Intent intent = getIntent();
 	    //        intent.putStringArrayListExtra("fileList", fileList);
 	           // chordmain.sendToAll("File Uploaded", 2);
+	            Toast toast = Toast.makeText(getApplicationContext(), "Syncing Done..", Toast.LENGTH_LONG);
+				   toast.show();
 	        }
 
 	        @Override
@@ -410,7 +425,7 @@ public class HostStartView extends FragmentActivity implements
 	        		System.out.println("DO IN BG FILELIST WAS EMPTY");
 	        	}
 	        	
-	        	
+	        	 
 	            return "Done sending " + inputs[0].size() +" files to server";
 	        }
 	    }
@@ -453,6 +468,7 @@ public class HostStartView extends FragmentActivity implements
 				case 1:
 				{
 					Fragment fragment = new FileListFragment();
+					((FileListFragment)fragment).setChord(chordmain);
 					Bundle args = new Bundle();
 					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
 					fragment.setArguments(args);
@@ -460,7 +476,7 @@ public class HostStartView extends FragmentActivity implements
 				}
 				case 2:
 				{
-					Fragment fragment = new DummySectionFragment();
+					Fragment fragment = new DisplayDeviceFragment();
 					Bundle args = new Bundle();
 					args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
 					fragment.setArguments(args);
@@ -525,6 +541,31 @@ public class HostStartView extends FragmentActivity implements
 		}
 	}
 	
+	//Fragment to display currently connected display devices
+	public static class DisplayDeviceFragment extends Fragment {
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		public static final String ARG_SECTION_NUMBER = "section_number";
+
+		public DisplayDeviceFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(
+					R.layout.fragment_host_start_view_dummy, container, false);
+			TextView dummyTextView = (TextView) rootView
+					.findViewById(R.id.section_label);
+			
+		
+			dummyTextView.setText(displayDeviceName);
+			return rootView;
+		}
+	}
+	
 	public static class FileListFragment extends Fragment
 	{
 		/**
@@ -533,16 +574,32 @@ public class HostStartView extends FragmentActivity implements
 		 */
 		public static final String ARG_SECTION_NUMBER = "section_number";
 
+		ChordMain myChord;
 		public FileListFragment()
 		{
 		}
 
+		public void setChord(ChordMain cm)
+		{
+			myChord = cm;
+		}
+		
+		@Override
+		public void onResume()
+		{
+			super.onResume();			
+			if(myChord != null)
+			{
+				myChord.startChord();
+			}
+		}
+		
+
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
 		{
-			View rootView = inflater.inflate(R.layout.fragment_filelist_hostview,container, false);
-			TextView dummyTextView = (TextView) rootView.findViewById(R.id.section_label);
-			dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+			View rootView = inflater.inflate(R.layout.fragment_filelist_hostview,container, false);			
 			
 			ArrayList<String> fileList = ServerInterface.getCurrentFileList(getActivity());
 			if (fileList != null)
@@ -554,9 +611,11 @@ public class HostStartView extends FragmentActivity implements
 				ListView lv = (ListView) rootView.findViewById(R.id.lv_fragment_filelist);
 				lv.setAdapter(arrayAdapter);
 			}
-			
-			
-			
+				
+			if(myChord != null)
+			{
+				myChord.startChord();
+			}
 			return rootView;
 		}		
 		

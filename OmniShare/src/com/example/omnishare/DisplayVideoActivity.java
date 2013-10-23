@@ -46,14 +46,10 @@ public class DisplayVideoActivity extends Activity
 		{
 			play.setText("Play");
 			mAllShareService.pauseVideo();	
-		}
-		
-		wasPlaying = !wasPlaying;
-		
+		}		
+		wasPlaying = !wasPlaying;		
 	}
-	
-
-	
+		
 	@Override
 	protected void onDestroy()
 	{
@@ -61,5 +57,4 @@ public class DisplayVideoActivity extends Activity
 		mAllShareService.stop();
 		super.onDestroy();
 	}
-
 }

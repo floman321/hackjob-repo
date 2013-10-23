@@ -20,21 +20,12 @@
         android:layout_height="351dp" />
 
    <Button
-       android:id="@+id/btn_syncfiles"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_alignLeft="@+id/lv_fragment_filelist"
-       android:layout_below="@+id/lv_fragment_filelist"
-       android:text="Sync Files with Server" 
-       android:onClick="syncFiles"/>
-
-   <Button
        android:id="@+id/btn_suggest"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:layout_alignLeft="@+id/btn_syncfiles"
+       android:layout_alignLeft="@+id/lv_fragment_filelist"
        android:layout_alignParentBottom="true"
-       android:text="Suggest a file" 
-       android:onClick="suggestFile"/>
+       android:onClick="suggestFile"
+       android:text="Suggest a file" />
 
 </RelativeLayout>

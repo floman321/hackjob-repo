@@ -29,14 +29,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="40dip">
-		
+
 		<Button
-	        android:id="@+id/btn_joinnetwork"
-	        android:layout_width="192dip"
-	        android:layout_gravity="center"
-	        android:layout_height="wrap_content"
-	        android:text="@string/str_join_network"
-	        android:onClick="switchme"/>
+		    android:id="@+id/btn_guest_refresh"
+		    android:layout_width="150dp"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="left"
+		    android:onClick="refresh"
+		    android:text="Refresh" />
+
+		<Button
+		    android:id="@+id/btn_joinnetwork"
+		    android:layout_width="150dp"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="right"
+		    android:onClick="switchme"
+		    android:text="@string/str_join_network" />
 		
 	</FrameLayout>
 

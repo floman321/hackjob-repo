@@ -26,7 +26,8 @@ public class DisplayImageActivity extends Activity
 		
 		ImageView image = (ImageView)findViewById(R.id.imageView_displayimage);
 		String fileName = getIntent().getStringExtra("filePath");
-		Bitmap fullSizeImage = new BitmapFactory().decodeFile(fileName);
+		new BitmapFactory();
+		Bitmap fullSizeImage = BitmapFactory.decodeFile(fileName);
 		//Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(fileName),180,190);
 		
 		image.setImageBitmap(fullSizeImage);
@@ -43,15 +44,12 @@ public class DisplayImageActivity extends Activity
 	private void displayOnScreen(String fileName)
 	{
 		mAllShareService = new AllShareService(getApplicationContext());   
-
         if(mAllShareService == null)
         {
         	System.out.println("mAllShareService == null");        	
-        }     
-        
+        }             
         mAllShareService.init(getApplicationContext());   
-        mAllShareService.start(fileName);
-        
+        mAllShareService.start(fileName);        
 	}
 	
 	@Override

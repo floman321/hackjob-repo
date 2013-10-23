@@ -20,7 +20,7 @@ public class PdfhostviewActivity extends PdfViewerActivity
 		@Override
 		   public void onReceive(Context context, Intent intent) 
 		   {    
-				System.out.println("BroadcastReceiver on receive");				
+				System.out.println("BroadcastReceiver on receive sendPageNotification");				
 				sendPageNotification();
 		   }
 	}
@@ -38,15 +38,13 @@ public class PdfhostviewActivity extends PdfViewerActivity
 	@Override
 	protected void onResume()
 	{
-		// TODO Auto-generated method stub
 		super.onResume();		
-		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.FILESUGGEST_MESSAGE"));
+		registerReceiver(broadcastReceiver, new IntentFilter("com.example.omnishare.PDFREQUEST_MESSAGE"));
 	}
 	
 	@Override
 	protected void onPause()
 	{
-		// TODO Auto-generated method stub
 		super.onPause();
 		unregisterReceiver(broadcastReceiver);
 	}
@@ -54,9 +52,7 @@ public class PdfhostviewActivity extends PdfViewerActivity
 	@Override
 	protected void onDestroy()
 	{
-		// TODO Auto-generated method stub
 		super.onDestroy();
-		chordmain.stopChord();
 	}
 	
 	@Override

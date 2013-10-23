@@ -3,7 +3,7 @@
     android:id="@+id/networkhost"
     android:layout_width="match_parent"
     android:layout_height="80dip"
-    android:textColor="#000000"
+    android:textColor="#00B2FF"
      >
 
 </TextView>

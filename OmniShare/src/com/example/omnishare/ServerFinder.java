@@ -47,9 +47,7 @@ public class ServerFinder implements Runnable
         socket.send(packet);
         socket.send(new DatagramPacket(buf, buf.length, group, 5001));
         socket.send(new DatagramPacket(buf, buf.length, group, 5001));
-        
-        
-        
+                
         //find response        
            
         socket.joinGroup(group);

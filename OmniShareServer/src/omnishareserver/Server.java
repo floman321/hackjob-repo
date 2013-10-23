@@ -227,7 +227,7 @@ public class Server implements Runnable
         
         private void sendfile(File file) throws FileNotFoundException, IOException
         {
-                System.out.println("Attempt to send file " + file.getName());
+                System.out.println("Attempt to send file " + file.getName() + " to " + socket.getInetAddress());
                 byte[] mybytearray = new byte[(int) file.length()];  
 	          
 	        FileInputStream fis = new FileInputStream(file);  
@@ -286,7 +286,7 @@ public class Server implements Runnable
             }
         } catch (Exception ex)
         {
-            ex.printStackTrace();
+            System.out.println("Server Shutdown");
         }
     }
 

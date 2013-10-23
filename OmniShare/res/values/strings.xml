@@ -35,5 +35,6 @@
     <string name="title_activity_pptview">PPTViewActivity</string>
     <string name="title_activity_pdf_guest_view">PdfGuestViewActivity</string>
     <string name="title_activity_host_scan_networks">HostScanMeetingsActivity</string>
+    <string name="title_activity_guest_display_image">GuestDisplayImageActivity</string>
 
 </resources>

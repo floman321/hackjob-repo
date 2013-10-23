@@ -993,6 +993,7 @@ public abstract class PdfViewerActivity extends FragmentActivity {
 	            			mGraphView.bZoomIn.setEnabled(true);
 	            			progress = ProgressDialog.show(PdfViewerActivity.this, "Loading", "Loading PDF Page " + mPage, true, true);
 	            			startRenderThread(mPage, mZoom);
+	            			sendPageNotification();//For chord Purposes
 	            		}
 	                }
 	            })

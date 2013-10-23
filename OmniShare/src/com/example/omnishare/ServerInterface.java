@@ -1,6 +1,7 @@
 package com.example.omnishare;
  
 import java.io.BufferedInputStream;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -17,6 +18,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.StrictMode;
+
+/*
+ * Class to handle all Network interaction with server.
+ */
 public class ServerInterface
 {
     
@@ -456,7 +461,7 @@ public class ServerInterface
         
       
         
-        if(!hostAddress.equals("NO_HOST_SET") && !getCurrentFileList(context).contains(file.getName()))
+        if(!hostAddress.equals("NO_HOST_SET") && !getCurrentFileList(context).contains(file.getName()) && file.length() < 40000000)
         {
             try
             {

@@ -23,12 +23,17 @@ import java.util.logging.Logger;
 public class UDPBeacon implements Runnable
 {
     boolean running = true;
-    
+    InetAddress address = null;
+    MulticastSocket socket = null; 
+        
+    public void shutdown()
+    {
+        socket.close();
+    }
     @Override
     public void run()
     {
-        InetAddress address = null;
-        MulticastSocket socket = null; 
+      
         
         try
         {
@@ -62,9 +67,8 @@ public class UDPBeacon implements Runnable
            socket.close();    
         }
         catch(Exception e)
-        {           
-            e.printStackTrace();
-            System.out.println("Malformed UDP packet received.");
+        {                       
+            System.out.println("UDP Beacon Shutdown.");
         }
        
     }

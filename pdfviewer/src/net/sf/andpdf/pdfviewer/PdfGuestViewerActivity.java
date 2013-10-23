@@ -537,8 +537,9 @@ public abstract class PdfGuestViewerActivity extends Activity {
 			vl.setOrientation(LinearLayout.VERTICAL);
 
 			if (mOldGraphView == null)
-				progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page", true, true);
-			
+			{
+				//progress = ProgressDialog.show(PdfGuestViewerActivity.this, "Loading", "Loading PDF Page", true, true);
+			}
 			addNavButtons(vl);
 		        // remember page button for updates
 		        mBtPage2 = mBtPage;

@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,8 +27,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class HostScanNetworksActivity extends Activity
-{
-	
+{	
 	String myIP = "";
 
 	@Override
@@ -49,6 +49,14 @@ public class HostScanNetworksActivity extends Activity
 		return true;
 	}
 
+	@Override
+	public void onBackPressed()
+	{
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		finish();
+	}
+	
 	public void refresh(View v)
 	{		
 		 new FindServerTask().execute(myIP);			
@@ -63,6 +71,8 @@ public class HostScanNetworksActivity extends Activity
 		   @Override
 		   protected void onPreExecute() {
 		      super.onPreExecute();
+		      Button refreshBtn = (Button)findViewById(R.id.btn_host_refresh);
+		      refreshBtn.setEnabled(false);
 		   }
 		 
 		   @Override
@@ -74,8 +84,7 @@ public class HostScanNetworksActivity extends Activity
 				{
 				      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 				      StrictMode.setThreadPolicy(policy);
-			    }				
-			
+			    }		
 		        //Find Servers using UDP BroadCast packets.
 		        try
 				{		       
@@ -131,7 +140,7 @@ public class HostScanNetworksActivity extends Activity
 		   }
 		 
 		   @Override
-		protected void onPostExecute(ArrayList<String> result)
+		   protected void onPostExecute(ArrayList<String> result)
 		   {
 		      super.onPostExecute(result);
 		      System.out.println("onPostExecute");
@@ -155,10 +164,12 @@ public class HostScanNetworksActivity extends Activity
 					}
 				});
 		      System.out.println("onPostExecute ServerFinder " + serverList.size());
-
 		     
 		      ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.activity_listnetwork_item, serverList);
 		      lv.setAdapter(adapter);
+		      
+		      Button refreshBtn = (Button)findViewById(R.id.btn_host_refresh);
+		      refreshBtn.setEnabled(true);
 		   }
 	   }
 }

@@ -12,6 +12,7 @@ import com.samsung.chord.ChordManager.INetworkListener;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.OpenableColumns;
 import android.widget.Toast;
 
 public class ChordMain {
@@ -23,6 +24,7 @@ public class ChordMain {
 	//5 pay load = boolean result + fileName
 	protected static final String MESSAGE_SUGGESTFILE = "4";
 	protected static final String MESSAGE_SUGGESTFILE_RESPONSE = "5";
+	protected static final String MESSAGE_GUESTOPENACT_MESSAGE = "6";
 	protected static final String CHANNEL_JOINED = "OMNISHAREMESSAGECHANNEL";
 	protected ChordManager mChordManager = null;
 	protected boolean bStarted = false;
@@ -275,6 +277,15 @@ public class ChordMain {
         			//TODO Still to test
 				sendToAll("File Uploaded", 2);
         		}
+        	}
+        	else if(payloadType.equals(MESSAGE_GUESTOPENACT_MESSAGE)) 
+        	{
+        		System.out.println("MESSAGE_GUESTOPENACT_MESSAGE message received");           		 
+        		Intent broadcastIntent = new Intent("com.example.omnishare.OPENGUESTACT_MESSAGE");
+        		Integer fileId = Integer.parseInt(new String(payload[0]));
+        		System.out.println("MESSAGE_GUESTOPENACT_MESSAGE message received fileID " + fileId);
+        		broadcastIntent.putExtra("fileId", fileId); 		
+        		currContext.sendBroadcast(broadcastIntent);        		
         	}
         	
         	else {
