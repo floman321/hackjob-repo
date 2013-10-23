@@ -55,7 +55,15 @@ public class MeetingListItemDetail extends ListActivity
 	{
 		super.onStop();	
 	}
+<<<<<<< HEAD
 
+=======
+	
+	//@Override
+	//protected void onDestroy(){
+	//	dbController.close();
+	//}
+>>>>>>> 4e1dbaaae96acb427c0e51f7f304239170f74eae
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
