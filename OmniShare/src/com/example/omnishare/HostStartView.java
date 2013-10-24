@@ -492,13 +492,19 @@ public class HostStartView extends FragmentActivity implements
 				}
 			}
 		}
-
+		
+		/**
+		 * Set Number of Tabs to be generated
+		 */
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
-			return 3;
+			// Show 2 total pages.
+			return 2;
 		}
-
+		
+		/**
+		 * Set tab header titles
+		 */
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Locale l = Locale.getDefault();

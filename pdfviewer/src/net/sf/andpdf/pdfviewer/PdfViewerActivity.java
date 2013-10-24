@@ -1402,7 +1402,7 @@ public abstract class PdfViewerActivity extends FragmentActivity {
         fos.flush();
         fos.close();
         bos.close();
-       // bitmap.recycle();
+        bitmap.recycle();
      }
 
 	private void parsePDF(String filename, String password) throws PDFAuthenticationFailureException {

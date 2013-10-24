@@ -300,13 +300,19 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 				}			
 			}			
 		}
-
+		
+		/**
+		 * Set number of tabs to be generated
+		 */
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 3;
+			return 2;
 		}
 
+		/**
+		 * Set tab header titles
+		 */
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Locale l = Locale.getDefault();
@@ -315,8 +321,6 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 				return getString(R.string.str_currentview).toUpperCase(l);
 			case 1:
 				return getString(R.string.str_filelist).toUpperCase(l);
-			case 2:
-				return getString(R.string.str_view).toUpperCase(l);
 			}
 			return null;
 		}
@@ -417,8 +421,8 @@ public class GuestJoinedNetwork extends FragmentActivity implements
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
 		{
 			View rootView = inflater.inflate(R.layout.fragment_filelist_guest_joined_activity,container, false);
-			TextView dummyTextView = (TextView) rootView.findViewById(R.id.section_label);
-			dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+			//TextView dummyTextView = (TextView) rootView.findViewById(R.id.section_label);
+			//dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
 			
 			final ArrayList<String> fileList = ServerInterface.getCurrentFileList(getActivity());
 

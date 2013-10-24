@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="str_mymeetings">My Meetings</string>
     <string name="str_scanavailablenetw">Scan For Meetings</string>
-    <string name="str_configuration">Configuration</string>
+    <string name="str_configuration">About</string>
     <string name="str_create_new_meeting">Create New Meeting</string>
     <string name="str_remove_meeting">Remove Meeting</string>
     <string name="str_start_as_host">Start As Host</string>
